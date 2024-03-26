@@ -66,6 +66,7 @@ export class CoreCoursesHelperProvider {
         if (courseId) {
             // Search the course to get the category.
             const course = courses.find((course) => course.id == courseId);
+            console.log(course)
 
             if (course) {
                 categoryId = course.categoryid;

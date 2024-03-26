@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--background);
+    background: transparent;
 
     ion-card {
         --border-radius: var(--radius-sm);

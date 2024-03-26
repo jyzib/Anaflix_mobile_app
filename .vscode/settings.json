@@ -23,5 +23,8 @@
         "moodle.config.json": "jsonc",
         "moodle.config.*.json": "jsonc",
     },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 
 }

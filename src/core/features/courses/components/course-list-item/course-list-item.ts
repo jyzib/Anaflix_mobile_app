@@ -13,18 +13,42 @@
 // limitations under the License.
 
 import { CoreConstants } from '@/core/constants';
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
-import { CoreCourseProvider, CoreCourse } from '@features/course/services/course';
-import { CoreCourseHelper, CorePrefetchStatusInfo } from '@features/course/services/course-helper';
+import {
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
+import {
+    CoreCourseProvider,
+    CoreCourse,
+} from '@features/course/services/course';
+import {
+    CoreCourseHelper,
+    CorePrefetchStatusInfo,
+} from '@features/course/services/course-helper';
 import { CoreUser } from '@features/user/services/user';
 import { CoreNavigator } from '@services/navigator';
 import { CoreSites } from '@services/sites';
 import { CoreDomUtils } from '@services/utils/dom';
 import { Translate } from '@singletons';
 import { CoreColors } from '@singletons/colors';
-import { CoreEventCourseStatusChanged, CoreEventObserver, CoreEvents } from '@singletons/events';
-import { CoreCourseListItem, CoreCourses, CoreCoursesProvider } from '../../services/courses';
-import { CoreCoursesHelper, CoreEnrolledCourseDataWithExtraInfoAndOptions } from '../../services/courses-helper';
+import {
+    CoreEventCourseStatusChanged,
+    CoreEventObserver,
+    CoreEvents,
+} from '@singletons/events';
+import {
+    CoreCourseListItem,
+    CoreCourses,
+    CoreCoursesProvider,
+} from '../../services/courses';
+import {
+    CoreCoursesHelper,
+    CoreEnrolledCourseDataWithExtraInfoAndOptions,
+} from '../../services/courses-helper';
 import { CoreCoursesCourseOptionsMenuComponent } from '../course-options-menu/course-options-menu';
 import { CoreEnrolHelper } from '@features/enrol/services/enrol-helper';
 
@@ -40,11 +64,13 @@ import { CoreEnrolHelper } from '@features/enrol/services/enrol-helper';
     templateUrl: 'core-courses-course-list-item.html',
     styleUrls: ['course-list-item.scss'],
 })
-export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, OnChanges {
-
+export class CoreCoursesCourseListItemComponent
+    implements OnInit, OnDestroy, OnChanges
+{
     @Input() course!: CoreCourseListItem; // The course to render.
     @Input() showDownload = false; // If true, will show download button.
-    @Input() layout: 'listwithenrol'|'summarycard'|'list'|'card' = 'listwithenrol';
+    @Input() layout: 'listwithenrol' | 'summarycard' | 'list' | 'card' =
+        'listwithenrol';
 
     enrolmentIcons: CoreCoursesEnrolmentIcons[] = [];
     isEnrolled = false;
@@ -77,7 +103,9 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         this.setCourseColor();
 
         // Assume is enroled if mode is not listwithenrol.
-        this.isEnrolled = this.layout != 'listwithenrol' || this.course.progress !== undefined;
+        this.isEnrolled =
+            this.layout != 'listwithenrol' ||
+            this.course.progress !== undefined;
 
         if (!this.isEnrolled) {
             try {
@@ -93,13 +121,17 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
 
         if (this.isEnrolled) {
             // This field is only available from 3.6 onwards.
-            this.courseOptionMenuEnabled = (this.layout != 'listwithenrol' && this.layout != 'summarycard') &&
+            this.courseOptionMenuEnabled =
+                this.layout != 'listwithenrol' &&
+                this.layout != 'summarycard' &&
                 this.course.isfavourite !== undefined;
 
             this.initPrefetchCourse();
-
         } else if ('enrollmentmethods' in this.course) {
-            this.enrolmentIcons = await CoreEnrolHelper.getEnrolmentIcons(this.course.enrollmentmethods, this.course.id);
+            this.enrolmentIcons = await CoreEnrolHelper.getEnrolmentIcons(
+                this.course.enrollmentmethods,
+                this.course.id
+            );
         }
     }
 
@@ -124,8 +156,10 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
 
             const tint = CoreColors.lighter(this.course.color, 50);
             this.element.style.setProperty('--course-color-tint', tint);
-        } else if(this.course.colorNumber !== undefined) {
-            this.element.classList.add('course-color-' + this.course.colorNumber);
+        } else if (this.course.colorNumber !== undefined) {
+            this.element.classList.add(
+                'course-color-' + this.course.colorNumber
+            );
         }
     }
 
@@ -142,8 +176,13 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
      * Helper function to update course fields.
      */
     protected updateCourseFields(): void {
-        this.progress = 'progress' in this.course && typeof this.course.progress == 'number' ? this.course.progress : -1;
-        this.completionUserTracked = 'completionusertracked' in this.course && this.course.completionusertracked;
+        this.progress =
+            'progress' in this.course && typeof this.course.progress == 'number'
+                ? this.course.progress
+                : -1;
+        this.completionUserTracked =
+            'completionusertracked' in this.course &&
+            this.course.completionusertracked;
     }
 
     /**
@@ -151,11 +190,13 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
      */
     openCourse(): void {
         if (this.isEnrolled) {
-            CoreCourseHelper.openCourse(this.course, { params: { isGuest: false } });
+            CoreCourseHelper.openCourse(this.course, {
+                params: { isGuest: false },
+            });
         } else {
             CoreNavigator.navigateToSitePath(
                 `/course/${this.course.id}/summary`,
-                { params: { course: this.course } },
+                { params: { course: this.course } }
             );
         }
     }
@@ -166,8 +207,11 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
      * @param forceInit Force initialization of prefetch course info.
      */
     async initPrefetchCourse(forceInit = false): Promise<void> {
-        if (!this.isEnrolled || !this.showDownload ||
-            (this.courseOptionMenuEnabled && !forceInit)) {
+        if (
+            !this.isEnrolled ||
+            !this.showDownload ||
+            (this.courseOptionMenuEnabled && !forceInit)
+        ) {
             return;
         }
 
@@ -177,11 +221,18 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         }
 
         // Listen for status change in course.
-        this.courseStatusObserver = CoreEvents.on(CoreEvents.COURSE_STATUS_CHANGED, (data: CoreEventCourseStatusChanged) => {
-            if (data.courseId == this.course.id || data.courseId == CoreCourseProvider.ALL_COURSES_CLEARED) {
-                this.updateCourseStatus(data.status);
-            }
-        }, CoreSites.getCurrentSiteId());
+        this.courseStatusObserver = CoreEvents.on(
+            CoreEvents.COURSE_STATUS_CHANGED,
+            (data: CoreEventCourseStatusChanged) => {
+                if (
+                    data.courseId == this.course.id ||
+                    data.courseId == CoreCourseProvider.ALL_COURSES_CLEARED
+                ) {
+                    this.updateCourseStatus(data.status);
+                }
+            },
+            CoreSites.getCurrentSiteId()
+        );
 
         // Determine course prefetch icon.
         const status = await CoreCourse.getCourseStatus(this.course.id);
@@ -190,12 +241,18 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
 
         if (this.prefetchCourseData.loading) {
             // Course is being downloaded. Get the download promise.
-            const promise = CoreCourseHelper.getCourseDownloadPromise(this.course.id);
+            const promise = CoreCourseHelper.getCourseDownloadPromise(
+                this.course.id
+            );
             if (promise) {
                 // There is a download promise. If it fails, show an error.
                 promise.catch((error) => {
                     if (!this.isDestroyed) {
-                        CoreDomUtils.showErrorModalDefault(error, 'core.course.errordownloadingcourse', true);
+                        CoreDomUtils.showErrorModalDefault(
+                            error,
+                            'core.course.errordownloadingcourse',
+                            true
+                        );
                     }
                 });
             } else {
@@ -203,7 +260,6 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
                 CoreCourse.setCoursePreviousStatus(this.course.id);
             }
         }
-
     }
 
     /**
@@ -217,9 +273,11 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         this.courseStatus = status;
         this.prefetchCourseData.status = statusData.status;
         this.prefetchCourseData.icon = statusData.icon;
-        this.prefetchCourseData.statusTranslatable = statusData.statusTranslatable;
+        this.prefetchCourseData.statusTranslatable =
+            statusData.statusTranslatable;
         this.prefetchCourseData.loading = statusData.loading;
-        this.prefetchCourseData.downloadSucceeded = status === CoreConstants.DOWNLOADED;
+        this.prefetchCourseData.downloadSucceeded =
+            status === CoreConstants.DOWNLOADED;
     }
 
     /**
@@ -232,10 +290,17 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         event?.stopPropagation();
 
         try {
-            await CoreCourseHelper.confirmAndPrefetchCourse(this.prefetchCourseData, this.course);
+            await CoreCourseHelper.confirmAndPrefetchCourse(
+                this.prefetchCourseData,
+                this.course
+            );
         } catch (error) {
             if (!this.isDestroyed) {
-                CoreDomUtils.showErrorModalDefault(error, 'core.course.errordownloadingcourse', true);
+                CoreDomUtils.showErrorModalDefault(
+                    error,
+                    'core.course.errordownloadingcourse',
+                    true
+                );
             }
         }
     }
@@ -247,7 +312,7 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         try {
             await CoreDomUtils.showDeleteConfirm(
                 'addon.storagemanager.confirmdeletedatafrom',
-                { name: this.course.displayname || this.course.fullname },
+                { name: this.course.displayname || this.course.fullname }
             );
         } catch (error) {
             if (!CoreDomUtils.isCanceledError(error)) {
@@ -262,7 +327,10 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         try {
             await CoreCourseHelper.deleteCourseFiles(this.course.id);
         } catch (error) {
-            CoreDomUtils.showErrorModalDefault(error, Translate.instant('core.errordeletefile'));
+            CoreDomUtils.showErrorModalDefault(
+                error,
+                Translate.instant('core.errordeletefile')
+            );
         } finally {
             modal.dismiss();
         }
@@ -295,7 +363,10 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
                 }
                 break;
             case 'delete':
-                if (this.courseStatus == CoreConstants.DOWNLOADED || this.courseStatus == CoreConstants.OUTDATED) {
+                if (
+                    this.courseStatus == CoreConstants.DOWNLOADED ||
+                    this.courseStatus == CoreConstants.OUTDATED
+                ) {
                     this.deleteCourseStoredData();
                 }
                 break;
@@ -314,7 +385,6 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
             default:
                 break;
         }
-
     }
 
     /**
@@ -329,23 +399,31 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         try {
             await CoreUser.updateUserPreference(
                 'block_myoverview_hidden_course_' + this.course.id,
-                hide ? '1' : undefined,
+                hide ? '1' : undefined
             );
 
             this.course.hidden = hide;
 
-            (<CoreEnrolledCourseDataWithExtraInfoAndOptions> this.course).hidden = hide;
-            CoreEvents.trigger(CoreCoursesProvider.EVENT_MY_COURSES_UPDATED, {
-                courseId: this.course.id,
-                course: this.course,
-                action: CoreCoursesProvider.ACTION_STATE_CHANGED,
-                state: CoreCoursesProvider.STATE_HIDDEN,
-                value: hide,
-            }, CoreSites.getCurrentSiteId());
-
+            (<CoreEnrolledCourseDataWithExtraInfoAndOptions>(
+                this.course
+            )).hidden = hide;
+            CoreEvents.trigger(
+                CoreCoursesProvider.EVENT_MY_COURSES_UPDATED,
+                {
+                    courseId: this.course.id,
+                    course: this.course,
+                    action: CoreCoursesProvider.ACTION_STATE_CHANGED,
+                    state: CoreCoursesProvider.STATE_HIDDEN,
+                    value: hide,
+                },
+                CoreSites.getCurrentSiteId()
+            );
         } catch (error) {
             if (!this.isDestroyed) {
-                CoreDomUtils.showErrorModalDefault(error, 'Error changing course visibility.');
+                CoreDomUtils.showErrorModalDefault(
+                    error,
+                    'Error changing course visibility.'
+                );
             }
         } finally {
             this.showSpinner = false;
@@ -364,17 +442,23 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
             await CoreCourses.setFavouriteCourse(this.course.id, favourite);
 
             this.course.isfavourite = favourite;
-            CoreEvents.trigger(CoreCoursesProvider.EVENT_MY_COURSES_UPDATED, {
-                courseId: this.course.id,
-                course: this.course,
-                action: CoreCoursesProvider.ACTION_STATE_CHANGED,
-                state: CoreCoursesProvider.STATE_FAVOURITE,
-                value: favourite,
-            }, CoreSites.getCurrentSiteId());
-
+            CoreEvents.trigger(
+                CoreCoursesProvider.EVENT_MY_COURSES_UPDATED,
+                {
+                    courseId: this.course.id,
+                    course: this.course,
+                    action: CoreCoursesProvider.ACTION_STATE_CHANGED,
+                    state: CoreCoursesProvider.STATE_FAVOURITE,
+                    value: favourite,
+                },
+                CoreSites.getCurrentSiteId()
+            );
         } catch (error) {
             if (!this.isDestroyed) {
-                CoreDomUtils.showErrorModalDefault(error, 'Error changing course favourite attribute.');
+                CoreDomUtils.showErrorModalDefault(
+                    error,
+                    'Error changing course favourite attribute.'
+                );
             }
         } finally {
             this.showSpinner = false;
@@ -388,7 +472,6 @@ export class CoreCoursesCourseListItemComponent implements OnInit, OnDestroy, On
         this.isDestroyed = true;
         this.courseStatusObserver?.off();
     }
-
 }
 
 /**

@@ -34,6 +34,7 @@ export class CoreCoursesIndexLinkHandlerService extends CoreContentLinksHandlerB
      * @inheritdoc
      */
     getActions(siteIds: string[], url: string, params: Params): CoreContentLinksAction[] {
+        console.log("params")
         return [{
             action: (siteId): void => {
                 let pageName = CoreCoursesMyCoursesMainMenuHandlerService.PAGE_NAME;

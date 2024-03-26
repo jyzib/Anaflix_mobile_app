@@ -54,6 +54,7 @@ export class CoreBlockComponent implements OnChanges, OnDestroy {
         if (this.data && changes.extraData) {
             this.data = Object.assign(this.data, this.extraData || {});
         }
+            console.log(this.data)
     }
 
     /**

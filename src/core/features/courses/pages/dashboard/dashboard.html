@@ -1,119 +1,527 @@
-<!-- <core-navbar-buttons slot="end" prepend>
-    <ion-button *ngIf="searchEnabled" (click)="openSearch()" [attr.aria-label]="'core.courses.searchcourses' | translate">
-        <ion-icon name="fas-magnifying-glass" slot="icon-only" aria-hidden="true" />
-    </ion-button>
-</core-navbar-buttons>
-<ion-content>
-    <ion-refresher slot="fixed" [disabled]="!loaded" (ionRefresh)="refreshDashboard($event.target)">
-        <ion-refresher-content pullingText="{{ 'core.pulltorefresh' | translate }}" />
-    </ion-refresher>
+<ion-content *ngIf="loaded">
 
-    <core-loading [hideUntil]="loaded">
-        <ion-list class="list-item-limited-width" *ngIf="hasMainBlocks">
-            <ng-container *ngFor="let block of blocks">
-                <core-block *ngIf="block.visible" [block]="block" contextLevel="user" [instanceId]="userId" />
-            </ng-container>
-        </ion-list>
+    <div class="side-barr" [ngClass]="{'':condition,'side-active':!condition}">
+        <div class="data">
+            <div class="hr-div">
+                <div class="hr-section-box">
+                    <p>HR Section</p>
+                    <p (click)="handelbarClose()" id="crosss">X</p>
+                </div>
+                <div class="hr-section-body">
+                    <span *ngFor="let hrection of updatedObject.hrsection;let i = index">
+                        <span class="custome-count-hr">
+                            <span>{{i+1}}.</span>
+                            <p (click)="allcourse(hrection.id,true)" class="hrfullname">
+                                {{hrection.fullname}}</p>
+                        </span>
+                        <span *ngFor="let section of hrection.sections">
+                            <span *ngIf="section.summary; else elseBlockkk">
+                                <a href="{{section.summary}}">
+                                    <span class="hr-icon-block">
+                                        <span>
+                                            <svg width="17" height="17" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M19.0058 11.8034L2.5722 21.4435C2.4208 21.5323 2.24868 21.5797 2.07315 21.5809C1.89762 21.5822 1.72486 21.5372 1.57224 21.4504C1.41962 21.3637 1.2925 21.2384 1.20368 21.087C1.11486 20.9356 1.06746 20.7635 1.06624 20.5879L0.934177 1.53639C0.932965 1.36086 0.977978 1.1881 1.06469 1.03548C1.15141 0.882858 1.27677 0.755752 1.42817 0.666935C1.57958 0.578118 1.7517 0.53072 1.92723 0.529504C2.10276 0.528288 2.27552 0.573298 2.42814 0.66001L18.9938 10.0714C19.1464 10.1581 19.2735 10.2835 19.3623 10.4349C19.4511 10.5863 19.4985 10.7584 19.4997 10.9339C19.5009 11.1094 19.4559 11.2822 19.3692 11.4348C19.2825 11.5874 19.1572 11.7145 19.0058 11.8034Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </span>
+                                        <p class="section-link">
+                                            {{section.name}}</p>
+                                    </span>
+                                    <span><svg width="19" height="19" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M1.07793 30.7314C1.41895 30.9652 2.73433 31.618 3.8451 30.215L11.3671 19.2242L19.3276 26.9021C19.7466 27.3016 20.3214 27.516 20.906 27.4478C21.4809 27.3893 22.0071 27.0873 22.3481 26.6098L35.5506 7.67815L36.028 14.0114C36.1449 15.6191 37.6552 15.8822 38.1618 15.8432C39.2531 15.7555 40.0813 14.8104 39.9936 13.7094L39.1557 2.57253C39.0777 1.48125 38.1229 0.653054 37.0219 0.740746L25.885 1.57869C24.7937 1.65664 23.9655 2.61151 24.0532 3.71253C24.1311 4.8038 25.0763 5.62226 26.187 5.54431L32.5203 5.06688L20.4189 22.4104L12.4389 14.713C12.0199 14.3038 11.4353 14.0991 10.8604 14.1673C10.2758 14.2258 9.74968 14.5376 9.4184 15.0248L0.561524 27.9642C-0.062063 28.8703 0.171781 30.1078 1.07793 30.7314Z"
+                                                fill="white" />
+                                        </svg>
+                                    </span>
+                                </a>
+                            </span>
+                            <ng-template #elseBlockkk>
+                                <span class="hr-icon-block">
+                                    <span>
+                                        <svg width="17" height="17" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M19.0058 11.8034L2.5722 21.4435C2.4208 21.5323 2.24868 21.5797 2.07315 21.5809C1.89762 21.5822 1.72486 21.5372 1.57224 21.4504C1.41962 21.3637 1.2925 21.2384 1.20368 21.087C1.11486 20.9356 1.06746 20.7635 1.06624 20.5879L0.934177 1.53639C0.932965 1.36086 0.977978 1.1881 1.06469 1.03548C1.15141 0.882858 1.27677 0.755752 1.42817 0.666935C1.57958 0.578118 1.7517 0.53072 1.92723 0.529504C2.10276 0.528288 2.27552 0.573298 2.42814 0.66001L18.9938 10.0714C19.1464 10.1581 19.2735 10.2835 19.3623 10.4349C19.4511 10.5863 19.4985 10.7584 19.4997 10.9339C19.5009 11.1094 19.4559 11.2822 19.3692 11.4348C19.2825 11.5874 19.1572 11.7145 19.0058 11.8034Z"
+                                                fill="white" />
+                                        </svg>
+                                    </span>
+                                    <p class="section-link">
+                                        {{section.name}}</p>
+                                </span>
+                            </ng-template>
 
-        <core-block-side-blocks-button slot="fixed" *ngIf="hasSideBlocks" contextLevel="user" [instanceId]="userId" />
+                            <span [ngStyle]="{'display':section.link.length > 1? 'block':'none'}" *ngFor="let link of section.link">
+                                <div *ngIf="link.externalurl; else noSummary">
+                                    <a href="{{ link.externalurl }}">
 
-        <core-empty-box *ngIf="!hasMainBlocks" icon="fas-cubes" [message]="'core.course.nocontentavailable' | translate" />
-    </core-loading>
-</ion-content> -->
-<ion-content class="ion-padding">
-    <div class="item">
-        <div class="img-box">
-            <img src="https://yislms.com/ankesh/education/assets/img/banner-anaflix.png" alt="" class="img-fluid">
-        </div>
-    </div>
+                                        <span class="link-hr">
+                                            <svg width="17" height="17" viewBox="0 0 41 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M38.025 21.4253C39.348 22.2074 39.3304 24.1273 37.9934 24.8851L5.81743 43.1239C4.47743 43.8837 2.81729 42.9065 2.83136 41.3665L3.17004 4.30408C3.18411 2.76414 4.86184 1.81643 6.18773 2.60058L38.025 21.4253Z"
+                                                    stroke="#F8F8F8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                            <p class="link-p d">{{ link.link }}</p>
+                                        </span>
+                                        <span><svg width="19" height="19" viewBox="0 0 40 32" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M1.07793 30.7314C1.41895 30.9652 2.73433 31.618 3.8451 30.215L11.3671 19.2242L19.3276 26.9021C19.7466 27.3016 20.3214 27.516 20.906 27.4478C21.4809 27.3893 22.0071 27.0873 22.3481 26.6098L35.5506 7.67815L36.028 14.0114C36.1449 15.6191 37.6552 15.8822 38.1618 15.8432C39.2531 15.7555 40.0813 14.8104 39.9936 13.7094L39.1557 2.57253C39.0777 1.48125 38.1229 0.653054 37.0219 0.740746L25.885 1.57869C24.7937 1.65664 23.9655 2.61151 24.0532 3.71253C24.1311 4.8038 25.0763 5.62226 26.187 5.54431L32.5203 5.06688L20.4189 22.4104L12.4389 14.713C12.0199 14.3038 11.4353 14.0991 10.8604 14.1673C10.2758 14.2258 9.74968 14.5376 9.4184 15.0248L0.561524 27.9642C-0.062063 28.8703 0.171781 30.1078 1.07793 30.7314Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </span>
+                                    </a>
+                                </div>
 
-    <ion-row class="search-container">
-        <ion-col class="custombox1">
-            <div class="search-container-inner">
-                <ion-icon name="search" class="searchicon"></ion-icon>
-                <ion-input type="text" placeholder="Search Your Course" class="inputbox"></ion-input>
+                                <ng-template #noSummary>
+                                    <p class="link-hr"> {{ link.link }}</p>
+                                </ng-template>
+
+                            </span>
+                        </span>
+
+
+
+                    </span>
+
+                </div>
+
+
+
             </div>
-        </ion-col>
-        <ion-col class="custombox2">
-            <h5 class="heading">Ethics Hotline or POSH Hotline</h5>
-        </ion-col>
+        </div>
+        <div (click)="handelbarClose()" class="right-data">
+
+        </div>
+
+    </div>
+    <div class="item banner-box">
+
+        <div class="img-box">
+
+
+
+
+
+            <!-- Example Component Template -->
+            <div *ngIf="img && img.length > 0; else elseBlockk">
+                <button class="left" (click)="left()"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_165_998)">
+                            <rect width="28" height="28" rx="14" fill="white" />
+                            <mask id="mask0_165_998" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="28"
+                                height="28">
+                                <path
+                                    d="M14 26C20.6276 26 26 20.6276 26 14C26 7.3724 20.6276 2 14 2C7.3724 2 2 7.3724 2 14C2 20.6276 7.3724 26 14 26Z"
+                                    fill="white" stroke="white" stroke-width="4" stroke-linejoin="round" />
+                                <path d="M15.8004 19.3999L10.4004 13.9999L15.8004 8.59985" stroke="black" stroke-width="4"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </mask>
+                            <g mask="url(#mask0_165_998)">
+                                <path d="M-0.400391 -0.399902H28.3996V28.4001H-0.400391V-0.399902Z" fill="#904E8F" />
+                            </g>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_165_998">
+                                <rect width="28" height="28" rx="14" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg></button>
+
+                <img src="https://yislms.com/new_anaflix/moodle/local/admin_dashboard/textsticker_files/{{img[count]?.imagepath}}" alt=""
+                    class="img-fluid">
+
+                <button class="right" (click)="right()"> <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_6_2)">
+                            <mask id="mask0_6_2" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="28" height="28">
+                                <path
+                                    d="M0 14C0 21.732 6.26801 28 14 28C21.732 28 28 21.732 28 14C28 6.26801 21.732 0 14 0C6.26801 0 0 6.26801 0 14Z"
+                                    fill="white" />
+                            </mask>
+                            <g mask="url(#mask0_6_2)">
+                                <path
+                                    d="M0 14C0 21.732 6.26801 28 14 28C21.732 28 28 21.732 28 14C28 6.26801 21.732 0 14 0C6.26801 0 0 6.26801 0 14Z"
+                                    fill="white" />
+                                <mask id="mask1_6_2" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="28"
+                                    height="28">
+                                    <path
+                                        d="M14 2C7.3724 2 2 7.3724 2 14C2 20.6276 7.3724 26 14 26C20.6276 26 26 20.6276 26 14C26 7.3724 20.6276 2 14 2Z"
+                                        fill="white" stroke="white" stroke-width="4" stroke-linejoin="round" />
+                                    <path d="M12.1996 8.6001L17.5996 14.0001L12.1996 19.4002" stroke="black" stroke-width="4"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </mask>
+                                <g mask="url(#mask1_6_2)">
+                                    <path d="M28.4004 28.3999L-0.399599 28.3999L-0.399599 -0.400101L28.4004 -0.400101L28.4004 28.3999Z"
+                                        fill="#904E8F" />
+                                </g>
+                            </g>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_6_2">
+                                <rect width="28" height="28" fill="white" transform="matrix(-1 0 0 -1 28 28)" />
+                            </clipPath>
+                        </defs>
+                    </svg></button>
+            </div>
+
+            <ng-template #elseBlockk>
+                <img src="assets/coming_soon.png" alt="" class="img-fluid">
+            </ng-template>
+
+        </div>
+        <div class="dot-container">
+            <span *ngFor="let x of img;let i = index">
+                <div class="dot" [ngClass]="{'round':count == i,'':count != i}"></div>
+            </span>
+        </div>
+
+    </div>
+    <ion-row class="search-container">
+        <div class="hr-and-main">
+            <div class="custombox2"><span class="heading" (click)="hamburger()">HR Section</span></div>
+            <div class="custombox2 Ethics-Hotline" (click)="change()">
+                <h5 class="heading">Ethics and POSH Hotline</h5>
+            </div>
+        </div>
     </ion-row>
 
-    <div class="course-body">
-        <ion-row class="main-course-reshort">
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
-                    </div>
-                    <h2 class="hr-section">HR Section</h2>
+
+    <div [ngStyle]="{'display':searchCourses?'block':'none'}" class="search-course-all">
+        <div class="backarrow" (click)="handelbacksearch()"><svg width="19" height="19" viewBox="0 0 16 16" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="black" />
+            </svg></div>
+        <p class="Showing-result">Showing result for : <b>{{searchValue}}</b></p>
+        <div class=search-course-box>
+            <div *ngFor="let e of searchcoursearra" class="custom-course-grid">
+                <div (click)="allcourse(e.id, e.isenrol)" class="custom-img">
+                    <img class="card-image" *ngIf="e.img" [src]="e.img" alt="Course Image" />
+                    <img class="card-image" *ngIf="!e.img" src="assets/nocourse.png" alt="No Course Image" />
                 </div>
-            </ion-col>
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
+                <p class="hr-p" [ngStyle]="{'display': e.isenrol ? 'none' : 'block' }">You are not enrolled in this course</p>
+                <p class="hr-section">{{e.fullname}}</p>
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+    <ion-col class="custombox1">
+        <div class="search-container-inner">
+            <ion-icon (click)="handelcourseSearch()" name="search" class="searchicon"></ion-icon>
+            <ion-input type="text" placeholder="Search Your Course" class="inputbox" [(ngModel)]="searchValue"></ion-input>
+
+        </div>
+    </ion-col>
+
+
+    <div>
+        <ng-container *ngIf="open; else elseBlock">
+            <div class="modale" id="">
+
+                <div class="modale-custom">
+                    <p id="cross" (click)="close()">X</p>
+
+
+                    <div class="text-section">
+                        <div>
+                            <h3 class="msg-text">Ethics or POSH Hotline</h3>
+                            <p class="Chooseyour">Choose your complaint type</p>
+                        </div>
+
+                        <div class="EthicsHotline">
+                            <span (click)="handelSubject('Ethics')" class="Hotline-Ethics Ethics">
+                                <p class="Ethics-msg"> <span class="rounded {{Ethics && 'dotactive'}}"></span> Ethics Hotline</p>
+                            </span><span (click)="handelSubject('POSH')" class="POSH-Hotline Ethics">
+                                <p class="Ethics-msg"><span class="rounded {{Posh && 'dotactive'}}"></span> POSH Hotline</p>
+                            </span>
+                        </div>
+                        <div>
+
+
+                            <div class="text-area">
+
+                                <textarea [(ngModel)]="messageValue" (input)="oninputmessage()" name="message" id="message"
+                                    placeholder="Please write your complaint....." cols="30" rows="10"></textarea>
+                                <div class="submit">
+                                    <div class="submits" (click)="handelclick()">Submit</div>
+
+                                    <span [ngStyle]="{'display': isLoading ? 'block' : 'none'}" class="loader"></span>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="errdiv">
+                            <p class="errmsg">Please Note :-</p>
+                            <ul class="POSHHotline-ul">
+                                <li class="POSHHotline">POSH Hotline to be used only to report sexual harassment of <span
+                                        class="women">women employees</span></li>
+                                <li class="POSHHotline">For any other complaint, please use the Ethics Hotline</li>
+                            </ul>
+
+                        </div>
                     </div>
-                    <h2 class="hr-section">HR Section</h2>
                 </div>
-            </ion-col>
-        </ion-row>
-        <ion-row class="main-course-reshort">
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
+            </div>
+
+        </ng-container>
+        <ng-template #elseBlock>
+
+        </ng-template>
+    </div>
+
+    <div class="course-div">
+        <h3 class="re-short">ReShorts </h3>
+        <div *ngIf="reShort.length > 0; else noReshort" class="main-course-reshort reshort-box">
+
+            <div *ngFor="let title of reShort">
+
+
+                <div (click)="handelreshort(title.id)" class="custom-card">
+                    <div class="custom-img img">
+                        <img class="card-image img" src={{title.imagepath}} />
                     </div>
-                    <h2 class="hr-section">HR Section</h2>
+                    <p class="hr-section p">{{title.title}}</p>
                 </div>
-            </ion-col>
-            <ion-col size="6">
-                <div class="custom-card">
+
+            </div>
+
+
+        </div>
+        <ng-template #noReshort>
+            <div class="no-data-message">
+                <img src="assets/img/icons/courses.svg" alt="">
+
+            </div>
+        </ng-template>
+
+    </div>
+
+    <div class="course-div">
+        <h3 class="re-short">What’s New</h3>
+        <div *ngIf="whatnewdata.length > 0; else noData" class="main-course-reshort">
+
+            <div *ngFor="let title of whatnewdata">
+                <div (click)="allcourse(title.courseid, title.isenrol)" class="custom-card">
                     <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
+                        <img class="card-image" *ngIf="title.courseimage" [src]="title.courseimage" alt="Course Image" />
+                        <img class="card-image" *ngIf="!title.courseimage" src="assets/nocourse.png" alt="No Course Image" />
                     </div>
-                    <h2 class="hr-section">HR Section</h2>
+                    <p class="hr-p" [ngStyle]="{'display': title.isenrol ? 'none' : 'block' }">You are not enrolled in this course</p>
+                    <p class="hr-section">{{ title.fullname }}</p>
                 </div>
-            </ion-col>
-        </ion-row>
-        <ion-row class="main-course-reshort">
-            <ion-col size="6">
-                <div class="custom-card">
+            </div>
+
+
+
+        </div>
+        <ng-template #noData>
+            <div class="no-data-message">
+                <img src="assets/img/icons/courses.svg" alt="">
+
+            </div>
+        </ng-template>
+
+    </div>
+
+    <div [ngStyle]="{'display': isReshort ? 'block' : 'none'}" class="reshort-points">
+        <div class="backarrow" (click)="handelBackreshort()"><svg width="19" height="19" viewBox="0 0 16 16" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="black" />
+            </svg></div>
+        <div class="main">
+            <div *ngFor="let e of reshortOne" class="box">
+                <div class="imgbox">
+                    <img src="{{e.imagepath}}" alt="" class="img-fluid">
+                </div>
+                <div class="parabox">
+                    <p>{{e.content}}</p>
+                </div>
+                <div class="anacoin-count">
+                    <a href="{{e.source}}" class="readmore">Read more</a>
+                    <div [ngStyle]="{'display': isAnacoinCount ? 'block' : 'none'}" class="clock">
+                        <div id="countdown">
+                            <div id="countdown-number">{{countAnacoin}}</div>
+                            <svg>
+                                <circle r="18" cx="20" cy="20"></circle>
+                            </svg>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div [ngStyle]="{'display': anacoin ? 'block' : 'none'}" class="wrapper">
+        <div class="modal">
+            <span class="emoji"><img class="img-custom" src="assets/coin.gif" alt=""></span>
+            <h1>Congratulations, {{userName}} <br> <span class="points2">1 ANACOINs.</span> </h1>
+            <div (click)="handelclosecoin()" class="modal-btn">OK</div>
+        </div>
+
+
+    </div>
+    <div class="course-div">
+        <h3 class="re-short">Courses based on past views</h3>
+        <div *ngIf="courseBasedpastView.length > 0; else noCourse" class="main-course-reshort">
+
+            <div *ngFor="let title of courseBasedpastView">
+                <div (click)="allcourse(title.id,true)" class="custom-card">
                     <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
+                        <img class="card-image" *ngIf="title.img" [src]="title.img" alt="Course Image" />
+                        <img class="card-image" *ngIf="!title.img" src="assets/nocourse.png" alt="No Course Image" />
                     </div>
-                    <h2 class="hr-section">HR Section</h2>
+                    <p class="hr-section">{{title.fullname}}</p>
                 </div>
-            </ion-col>
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
-                    </div>
-                    <h2 class="hr-section">HR Section</h2>
-                </div>
-            </ion-col>
-        </ion-row>
-        <ion-row class="main-course-reshort">
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
-                    </div>
-                    <h2 class="hr-section">HR Section</h2>
-                </div>
-            </ion-col>
-            <ion-col size="6">
-                <div class="custom-card">
-                    <div class="custom-img">
-                        <img class="card-image" src="https://yislms.com/agilemania/pluginfile.php/126/course/overviewfiles/scrum.png" />
-                    </div>
-                    <h2 class="hr-section">HR Section</h2>
-                </div>
-            </ion-col>
-        </ion-row>
+            </div>
+
+        </div>
+
+
+
 
 
 
     </div>
+    <ng-template #noCourse>
+        <div class="no-data-message">
+            <img src="assets/img/icons/courses.svg" alt="">
+
+        </div>
+    </ng-template>
+
+
+    <div class="container">
+        <h3 class="re-shorts">Leaderboard-Top 10 ANACOIN Earners </h3>
+        <div>
+
+            <p class="yourAnacoin">My ANACOINs : {{userAnacoin}}</p>
+            <div class="yourAnacoin" (click)="handelshomcoin()">View My ANACOINs</div>
+            <div [ngStyle]="{'display': isyourAnacoin ? 'block' : 'none'}" class="view-your-coins">
+                <div class="backarrow" (click)="handelbackmycoin()"><svg width="19" height="19" viewBox="0 0 16 16" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="black" />
+                    </svg></div>
+                <div class="main-box-div">
+                    <main class="table">
+                        <section class="table__header">
+                            <div class="Course_Pogress">
+
+                                <h3>View ANACOINs</h3>
+                            </div>
+
+
+                        </section>
+                        <section class="table__body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="sno-custome"> S no</th>
+                                        <th> ANACOINs Earned</th>
+
+
+                                        <th>Program </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Displaying paginated data -->
+                                    <tr *ngFor="let ele of myAnacoins.slice(startIndex, endIndex); let i = index">
+                                        <td>{{ i + 1 + (currentPage - 1) * pageSize }}</td>
+                                        <td>{{ ele.points }}</td>
+
+                                        <td>{{ ele.name == 'policy' ? ele.name + ' Accepted' : ele.name + ' view' }}</td>
+                                    </tr>
+
+
+
+
+
+
+                                </tbody>
+                            </table>
+
+                        </section>
+                    </main>
+                    <div class="pagination">
+                        <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+                        <span>{{ currentPage }} / {{ totalPages }}</span>
+                        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+                    </div>
+                </div>
+                <div class="course-div">
+                    <div class="enroo">
+                        <h3 class="re-shot">Enroll in these courses</h3>
+                    </div>
+                    <div class="main-course-reshort">
+                        <div *ngFor="let title of whatnewdata">
+                            <div class="custom-card">
+                                <div class="custom-img">
+                                    <img class="card-image" *ngIf="title.courseimage" [src]="title.courseimage" alt="Course Image" />
+                                    <img class="card-image" *ngIf="!title.courseimage" src="assets/nocourse.png" alt="No Course Image" />
+                                </div>
+                                <p class="hr-section">{{title.fullname}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Name</th>
+                        <th> Buisness</th>
+                        <th> ANACOINs</th>
+
+                        <th> Rank </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let user of leaderBoard;let i = index">
+                        <td>
+                            {{user.username}}
+
+                        </td>
+                        <td>
+                            {{user.data}}
+
+                        </td>
+                        <td>
+                            {{user.points}}
+                        </td>
+                        <td>
+
+                            {{i+1}}
+                        </td>
+                    </tr>
+
+
+
+                </tbody>
+            </table>
+
+        </section>
+    </div>
+
+
+    <span class="textical-box">
+        <div class="scrolling-text">
+            <span
+                *ngFor="let x of textTickers">{{x.text}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+    </span>
+
+
 </ion-content>

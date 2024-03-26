@@ -13,14 +13,16 @@
 // limitations under the License.
 
 import { SQLiteDB } from '@classes/sqlitedb';
-import { DbTransaction, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
+import {
+    DbTransaction,
+    SQLiteObject,
+} from '@awesome-cordova-plugins/sqlite/ngx';
 import { CoreDB } from '@services/db';
 
 /**
  * Class to mock the interaction with the SQLite database.
  */
 export class SQLiteDBMock extends SQLiteDB {
-
     /**
      * Create and open the database.
      *
@@ -57,27 +59,41 @@ export class SQLiteDBMock extends SQLiteDB {
                 const query = `SELECT * FROM sqlite_master
                             WHERE name NOT LIKE 'sqlite\\_%' escape '\\' AND name NOT LIKE '\\_%' escape '\\'`;
 
-                tx.executeSql(query, args, (tx, result) => {
-                    if (result.rows.length <= 0) {
-                        // No tables to delete, stop.
-                        resolve(null);
+                tx.executeSql(
+                    query,
+                    args,
+                    (tx, result) => {
+                        if (result.rows.length <= 0) {
+                            // No tables to delete, stop.
+                            resolve(null);
 
-                        return;
-                    }
+                            return;
+                        }
 
-                    // Drop all the tables.
-                    const promises: Promise<void>[] = [];
+                        // Drop all the tables.
+                        const promises: Promise<void>[] = [];
 
-                    for (let i = 0; i < result.rows.length; i++) {
-                        promises.push(new Promise((resolve, reject): void => {
-                            // Drop the table.
-                            const name = JSON.stringify(result.rows.item(i).name);
-                            tx.executeSql('DROP TABLE ' + name, [], resolve, reject);
-                        }));
-                    }
+                        for (let i = 0; i < result.rows.length; i++) {
+                            promises.push(
+                                new Promise((resolve, reject): void => {
+                                    // Drop the table.
+                                    const name = JSON.stringify(
+                                        result.rows.item(i).name
+                                    );
+                                    tx.executeSql(
+                                        'DROP TABLE ' + name,
+                                        [],
+                                        resolve,
+                                        reject
+                                    );
+                                })
+                            );
+                        }
 
-                    Promise.all(promises).then(resolve).catch(reject);
-                }, reject);
+                        Promise.all(promises).then(resolve).catch(reject);
+                    },
+                    reject
+                );
             });
         });
     }
@@ -102,7 +118,12 @@ export class SQLiteDBMock extends SQLiteDB {
                     sql,
                     params,
                     (_, results) => resolve(results),
-                    (_, error) => reject(new Error(`SQL failed: ${sql}, reason: ${error?.message}`)),
+                    (_, error) =>
+                        reject(
+                            new Error(
+                                `SQL failed: ${sql}, reason: ${error?.message}`
+                            )
+                        )
                 );
             });
         });
@@ -127,20 +148,27 @@ export class SQLiteDBMock extends SQLiteDB {
 
                 // Execute all the queries. Each statement can be a string or an array.
                 sqlStatements.forEach((statement) => {
-                    promises.push(new Promise((resolve, reject): void => {
-                        let query;
-                        let params;
+                    promises.push(
+                        new Promise((resolve, reject): void => {
+                            let query;
+                            let params;
 
-                        if (Array.isArray(statement)) {
-                            query = statement[0];
-                            params = statement[1];
-                        } else {
-                            query = statement;
-                            params = null;
-                        }
+                            if (Array.isArray(statement)) {
+                                query = statement[0];
+                                params = statement[1];
+                            } else {
+                                query = statement;
+                                params = null;
+                            }
 
-                        tx.executeSql(query, params, (_, results) => resolve(results), (_, error) => reject(error));
-                    }));
+                            tx.executeSql(
+                                query,
+                                params,
+                                (_, results) => resolve(results),
+                                (_, error) => reject(error)
+                            );
+                        })
+                    );
                 });
 
                 // eslint-disable-next-line promise/catch-or-return
@@ -164,7 +192,12 @@ export class SQLiteDBMock extends SQLiteDB {
      */
     protected async createDatabase(): Promise<SQLiteObject> {
         // This DB is for desktop apps, so use a big size to be sure it isn't filled.
-        return (window as unknown as WebSQLWindow).openDatabase(this.name, '1.0', this.name, 500 * 1024 * 1024);
+        return (window as unknown as WebSQLWindow).openDatabase(
+            this.name,
+            '1.0',
+            this.name,
+            500 * 1024 * 1024
+        );
     }
 
     /**
@@ -174,46 +207,51 @@ export class SQLiteDBMock extends SQLiteDB {
         const dbName = this.name;
 
         return {
-            transaction: (callback) => db.transaction((transaction) => {
-                const transactionSpy: DbTransaction = {
-                    executeSql(sql, params, success, error) {
-                        const start = performance.now();
+            transaction: (callback) =>
+                db.transaction((transaction) => {
+                    const transactionSpy: DbTransaction = {
+                        executeSql(sql, params, success, error) {
+                            const start = performance.now();
 
-                        return transaction.executeSql(
-                            sql,
-                            params,
-                            (...args) => {
-                                CoreDB.logQuery({
-                                    sql,
-                                    params,
-                                    duration: performance.now() - start,
-                                    dbName,
-                                });
+                            return transaction.executeSql(
+                                sql,
+                                params,
+                                (...args) => {
+                                    CoreDB.logQuery({
+                                        sql,
+                                        params,
+                                        duration: performance.now() - start,
+                                        dbName,
+                                    });
 
-                                return success?.(...args);
-                            },
-                            (...args) => {
-                                CoreDB.logQuery({
-                                    sql,
-                                    params,
-                                    error: args[0],
-                                    duration: performance.now() - start,
-                                    dbName,
-                                });
+                                    return success?.(...args);
+                                },
+                                (...args) => {
+                                    CoreDB.logQuery({
+                                        sql,
+                                        params,
+                                        error: args[0],
+                                        duration: performance.now() - start,
+                                        dbName,
+                                    });
 
-                                return error?.(...args);
-                            },
-                        );
-                    },
-                };
+                                    return error?.(...args);
+                                }
+                            );
+                        },
+                    };
 
-                return callback(transactionSpy);
-            }),
+                    return callback(transactionSpy);
+                }),
         };
     }
-
 }
 
 interface WebSQLWindow extends Window {
-    openDatabase(name: string, version: string, displayName: string, estimatedSize: number): SQLiteObject;
+    openDatabase(
+        name: string,
+        version: string,
+        displayName: string,
+        estimatedSize: number
+    ): SQLiteObject;
 }

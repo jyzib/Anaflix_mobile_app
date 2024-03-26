@@ -13,12 +13,23 @@
 // limitations under the License.
 
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    ValidatorFn,
+    AbstractControl,
+    ValidationErrors,
+} from '@angular/forms';
 
 import { CoreApp } from '@services/app';
 import { CoreNetwork } from '@services/network';
 import { CoreConfig } from '@services/config';
-import { CoreSites, CoreSiteCheckResponse, CoreLoginSiteInfo, CoreSitesDemoSiteData } from '@services/sites';
+import {
+    CoreSites,
+    CoreSiteCheckResponse,
+    CoreLoginSiteInfo,
+    CoreSitesDemoSiteData,
+} from '@services/sites';
 import { CoreUtils } from '@services/utils/utils';
 import { CoreDomUtils } from '@services/utils/dom';
 import {
@@ -34,7 +45,10 @@ import { CoreUrlUtils } from '@services/utils/url';
 import { CoreLoginSiteHelpComponent } from '@features/login/components/site-help/site-help';
 import { CoreLoginSiteOnboardingComponent } from '@features/login/components/site-onboarding/site-onboarding';
 import { CoreNavigator } from '@services/navigator';
-import { CoreCustomURLSchemes, CoreCustomURLSchemesHandleError } from '@services/urlschemes';
+import {
+    CoreCustomURLSchemes,
+    CoreCustomURLSchemesHandleError,
+} from '@services/urlschemes';
 import { CoreTextUtils } from '@services/utils/text';
 import { CoreForms } from '@singletons/form';
 import { AlertButton } from '@ionic/core';
@@ -58,7 +72,6 @@ import { ONBOARDING_DONE } from '@features/login/constants';
     styleUrls: ['site.scss', '../../login.scss'],
 })
 export class CoreLoginSitePage implements OnInit {
-
     @ViewChild('siteFormEl') formElement?: ElementRef;
 
     siteForm!: FormGroup;
@@ -84,7 +97,8 @@ export class CoreLoginSitePage implements OnInit {
         let url = '';
         this.siteSelector = CoreConstants.CONFIG.multisitesdisplay;
 
-        const siteFinderSettings: Partial<CoreLoginSiteFinderSettings> = CoreConstants.CONFIG.sitefindersettings || {};
+        const siteFinderSettings: Partial<CoreLoginSiteFinderSettings> =
+            CoreConstants.CONFIG.sitefindersettings || {};
         this.siteFinderSettings = {
             displaysitename: true,
             displayimage: true,
@@ -101,9 +115,10 @@ export class CoreLoginSitePage implements OnInit {
         if (sites.length) {
             url = await this.initSiteSelector();
         } else {
-            url = await this.consumeInstallReferrerUrl() ?? '';
+            url = (await this.consumeInstallReferrerUrl()) ?? '';
 
-            const showOnboarding = CoreConstants.CONFIG.enableonboarding && !CorePlatform.isIOS();
+            const showOnboarding =
+                CoreConstants.CONFIG.enableonboarding && !CorePlatform.isIOS();
 
             if (url) {
                 this.connect(url);
@@ -131,7 +146,9 @@ export class CoreLoginSitePage implements OnInit {
                 const sites = await CoreSites.findSites(search);
 
                 // Add UI tweaks.
-                this.sites = this.extendCoreLoginSiteInfo(<CoreLoginSiteInfoExtended[]> sites);
+                this.sites = this.extendCoreLoginSiteInfo(
+                    <CoreLoginSiteInfoExtended[]>sites
+                );
 
                 this.hasSites = !!this.sites.length;
             } else {
@@ -142,7 +159,8 @@ export class CoreLoginSitePage implements OnInit {
             this.loadingSites = false;
         }, 1000);
 
-        this.showKeyboard = !!CoreNavigator.getRouteBooleanParam('showKeyboard');
+        this.showKeyboard =
+            !!CoreNavigator.getRouteBooleanParam('showKeyboard');
     }
 
     /**
@@ -152,7 +170,9 @@ export class CoreLoginSitePage implements OnInit {
      */
     protected async initSiteSelector(): Promise<string> {
         const availableSites = await CoreLoginHelper.getAvailableSites();
-        this.fixedSites = this.extendCoreLoginSiteInfo(<CoreLoginSiteInfoExtended[]> availableSites);
+        this.fixedSites = this.extendCoreLoginSiteInfo(
+            <CoreLoginSiteInfoExtended[]>availableSites
+        );
         this.siteSelector = 'list'; // In case it's not defined
 
         // Do not show images if none are set.
@@ -171,12 +191,18 @@ export class CoreLoginSitePage implements OnInit {
      * @returns Referrer URL, undefined if no URL to use.
      */
     protected async consumeInstallReferrerUrl(): Promise<string | undefined> {
-        const url = await CoreUtils.ignoreErrors(CoreUtils.timeoutPromise(CoreReferrer.consumeInstallReferrerUrl(), 1000));
+        const url = await CoreUtils.ignoreErrors(
+            CoreUtils.timeoutPromise(
+                CoreReferrer.consumeInstallReferrerUrl(),
+                1000
+            )
+        );
         if (!url) {
             return;
         }
 
-        const hasSites = (await CoreUtils.ignoreErrors(CoreSites.getSites(), [])).length > 0;
+        const hasSites =
+            (await CoreUtils.ignoreErrors(CoreSites.getSites(), [])).length > 0;
         if (hasSites) {
             // There are sites stored already, don't use the referrer URL since it's an update or a backup was restored.
             return;
@@ -205,25 +231,44 @@ export class CoreLoginSitePage implements OnInit {
      * @param sites Sites list.
      * @returns Sites list with extended info.
      */
-    protected extendCoreLoginSiteInfo(sites: CoreLoginSiteInfoExtended[]): CoreLoginSiteInfoExtended[] {
+    protected extendCoreLoginSiteInfo(
+        sites: CoreLoginSiteInfoExtended[]
+    ): CoreLoginSiteInfoExtended[] {
         return sites.map((site) => {
-            site.noProtocolUrl = this.siteFinderSettings.displayurl && site.url ? CoreUrl.removeProtocol(site.url) : '';
+            site.noProtocolUrl =
+                this.siteFinderSettings.displayurl && site.url
+                    ? CoreUrl.removeProtocol(site.url)
+                    : '';
 
-            const name = this.siteFinderSettings.displaysitename ? site.name : '';
-            const alias = this.siteFinderSettings.displayalias && site.alias ? site.alias : '';
+            const name = this.siteFinderSettings.displaysitename
+                ? site.name
+                : '';
+            const alias =
+                this.siteFinderSettings.displayalias && site.alias
+                    ? site.alias
+                    : '';
 
             // Set title with parenthesis if both name and alias are present.
-            site.title = name && alias ? name + ' (' + alias + ')' : name + alias;
+            site.title =
+                name && alias ? name + ' (' + alias + ')' : name + alias;
 
-            const country = this.siteFinderSettings.displaycountry && site.countrycode ?
-                CoreUtils.getCountryName(site.countrycode) : '';
-            const city = this.siteFinderSettings.displaycity && site.city ?
-                site.city : '';
+            const country =
+                this.siteFinderSettings.displaycountry && site.countrycode
+                    ? CoreUtils.getCountryName(site.countrycode)
+                    : '';
+            const city =
+                this.siteFinderSettings.displaycity && site.city
+                    ? site.city
+                    : '';
 
             // Separate location with hiphen if both country and city are present.
-            site.location = city && country ? city + ' - ' + country : city + country;
+            site.location =
+                city && country ? city + ' - ' + country : city + country;
 
-            if (CoreSites.hasDefaultImage(site) && this.siteFinderSettings.defaultimageurl) {
+            if (
+                CoreSites.hasDefaultImage(site) &&
+                this.siteFinderSettings.defaultimageurl
+            ) {
                 site.imageurl = this.siteFinderSettings.defaultimageurl;
             }
 
@@ -301,7 +346,10 @@ export class CoreLoginSitePage implements OnInit {
         url = url.trim();
 
         if (url.match(/^(https?:\/\/)?campus\.example\.edu/)) {
-            this.showLoginIssue(null, new CoreError(Translate.instant('core.login.errorexampleurl')));
+            this.showLoginIssue(
+                null,
+                new CoreError(Translate.instant('core.login.errorexampleurl'))
+            );
 
             return;
         }
@@ -311,7 +359,6 @@ export class CoreLoginSitePage implements OnInit {
         if (siteData) {
             // It's a demo site.
             await this.loginDemoSite(siteData);
-
         } else {
             // Not a demo site.
             const modal = await CoreDomUtils.showModalLoading();
@@ -352,13 +399,23 @@ export class CoreLoginSitePage implements OnInit {
      * @param siteData Site data.
      * @returns Promise resolved when done.
      */
-    protected async loginDemoSite(siteData: CoreSitesDemoSiteData): Promise<void> {
+    protected async loginDemoSite(
+        siteData: CoreSitesDemoSiteData
+    ): Promise<void> {
         const modal = await CoreDomUtils.showModalLoading();
 
         try {
-            const data = await CoreSites.getUserToken(siteData.url, siteData.username, siteData.password);
+            const data = await CoreSites.getUserToken(
+                siteData.url,
+                siteData.username,
+                siteData.password
+            );
 
-            await CoreSites.newSite(data.siteUrl, data.token, data.privateToken);
+            await CoreSites.newSite(
+                data.siteUrl,
+                data.token,
+                data.privateToken
+            );
 
             CoreForms.triggerFormSubmittedEvent(this.formElement, true);
 
@@ -366,7 +423,12 @@ export class CoreLoginSitePage implements OnInit {
 
             return;
         } catch (error) {
-            CoreLoginHelper.treatUserTokenError(siteData.url, error, siteData.username, siteData.password);
+            CoreLoginHelper.treatUserTokenError(
+                siteData.url,
+                error,
+                siteData.username,
+                siteData.password
+            );
 
             if (error.loggedout) {
                 CoreNavigator.navigate('/login/sites', { reset: true });
@@ -403,7 +465,10 @@ export class CoreLoginSitePage implements OnInit {
      * @param url The URL the user was trying to connect to.
      * @param error Error to display.
      */
-    protected async showLoginIssue(url: string | null, error: CoreError): Promise<void> {
+    protected async showLoginIssue(
+        url: string | null,
+        error: CoreError
+    ): Promise<void> {
         let errorMessage = CoreDomUtils.getErrorMessage(error);
         let siteExists = false;
         let supportConfig: CoreUserSupportConfig | undefined = undefined;
@@ -434,23 +499,22 @@ export class CoreLoginSitePage implements OnInit {
             },
             alertSupportConfig?.canContactSupport()
                 ? {
-                    text: Translate.instant('core.contactsupport'),
-                    handler: () => CoreUserSupport.contact({
-                        supportConfig: alertSupportConfig,
-                        subject: Translate.instant('core.cannotconnect'),
-                        message: `Error: ${errorCode}\n\n${errorDetails}`,
-                    }),
-                }
-                : (
-                    !siteExists
-                        ? {
-                            text: Translate.instant('core.needhelp'),
-                            cssClass: 'core-login-need-help',
-                            handler: () => this.showHelp(),
-                        }
-                        : null
-                ),
-        ].filter(button => !!button);
+                      text: Translate.instant('core.contactsupport'),
+                      handler: () =>
+                          CoreUserSupport.contact({
+                              supportConfig: alertSupportConfig,
+                              subject: Translate.instant('core.cannotconnect'),
+                              message: `Error: ${errorCode}\n\n${errorDetails}`,
+                          }),
+                  }
+                : !siteExists
+                ? {
+                      text: Translate.instant('core.needhelp'),
+                      cssClass: 'core-login-need-help',
+                      handler: () => this.showHelp(),
+                  }
+                : null,
+        ].filter((button) => !!button);
 
         const alertElement = await CoreDomUtils.showAlertWithOptions({
             header: errorTitle ?? Translate.instant('core.cannotconnect'),
@@ -460,9 +524,14 @@ export class CoreLoginSitePage implements OnInit {
 
         if (errorDetails) {
             // Avoid sanitizing JS.
-            const containerElement = alertElement.querySelector('.core-error-info-container');
+            const containerElement = alertElement.querySelector(
+                '.core-error-info-container'
+            );
             if (containerElement) {
-                containerElement.innerHTML = CoreErrorInfoComponent.render(errorDetails, errorCode);
+                containerElement.innerHTML = CoreErrorInfoComponent.render(
+                    errorDetails,
+                    errorCode
+                );
             }
         }
     }
@@ -478,9 +547,12 @@ export class CoreLoginSitePage implements OnInit {
         if (!newValue || !this.fixedSites) {
             this.filteredSites = this.fixedSites;
         } else {
-            this.filteredSites = this.fixedSites.filter((site) =>
-                site.title.toLowerCase().indexOf(newValue) > -1 || site.noProtocolUrl.toLowerCase().indexOf(newValue) > -1 ||
-                site.location.toLowerCase().indexOf(newValue) > -1);
+            this.filteredSites = this.fixedSites.filter(
+                (site) =>
+                    site.title.toLowerCase().indexOf(newValue) > -1 ||
+                    site.noProtocolUrl.toLowerCase().indexOf(newValue) > -1 ||
+                    site.location.toLowerCase().indexOf(newValue) > -1
+            );
         }
     }
 
@@ -542,7 +614,12 @@ export class CoreLoginSitePage implements OnInit {
             try {
                 await CoreCustomURLSchemes.handleCustomURL(text);
             } catch (error) {
-                if (error && error.data && error.data.isAuthenticationURL && error.data.siteUrl) {
+                if (
+                    error &&
+                    error.data &&
+                    error.data.isAuthenticationURL &&
+                    error.data.siteUrl
+                ) {
                     // An error ocurred, but it's an authentication URL and we have the site URL.
                     this.treatErrorInAuthenticationCustomURL(text, error);
                 } else {
@@ -557,7 +634,11 @@ export class CoreLoginSitePage implements OnInit {
         const scheme = CoreUrlUtils.getUrlProtocol(text);
 
         if (scheme && scheme != 'http' && scheme != 'https') {
-            CoreDomUtils.showErrorModal(Translate.instant('core.errorurlschemeinvalidscheme', { $a: text }));
+            CoreDomUtils.showErrorModal(
+                Translate.instant('core.errorurlschemeinvalidscheme', {
+                    $a: text,
+                })
+            );
 
             return;
         }
@@ -581,7 +662,10 @@ export class CoreLoginSitePage implements OnInit {
      * @param error Error data.
      * @returns Promise resolved when done.
      */
-    protected async treatErrorInAuthenticationCustomURL(customURL: string, error: CoreCustomURLSchemesHandleError): Promise<void> {
+    protected async treatErrorInAuthenticationCustomURL(
+        customURL: string,
+        error: CoreCustomURLSchemesHandleError
+    ): Promise<void> {
         const siteUrl = error.data?.siteUrl || '';
         const modal = await CoreDomUtils.showModalLoading();
 
@@ -609,7 +693,10 @@ export class CoreLoginSitePage implements OnInit {
         // Now display the error.
         error.error = CoreTextUtils.addTextToError(
             error.error,
-            '<br><br>' + Translate.instant('core.login.youcanstillconnectwithcredentials'),
+            '<br><br>' +
+                Translate.instant(
+                    'core.login.youcanstillconnectwithcredentials'
+                )
         );
 
         CoreCustomURLSchemes.treatHandleCustomURLError(error);
@@ -629,9 +716,10 @@ export class CoreLoginSitePage implements OnInit {
      * @returns Whether to display URL.
      */
     displaySiteUrl(siteUrl: string): boolean {
-        return CoreSitesFactory.makeUnauthenticatedSite(siteUrl).shouldDisplayInformativeLinks();
+        return CoreSitesFactory.makeUnauthenticatedSite(
+            siteUrl
+        ).shouldDisplayInformativeLinks();
     }
-
 }
 
 /**
