@@ -1,0 +1,86 @@
+@use "theme/globals" as *;
+
+:host {
+    --menu-min-width: 270px;
+    --menu-max-width: 28%;
+    --menu-box-shadow: var(--drop-shadow-end);
+    --menu-z: 2;
+    --menu-display: flex;
+    --content-display: block;
+    --content-outlet-display: none;
+    --content-placeholder-display: flex;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    contain: strict;
+
+    .menu,
+    .content-outlet {
+        top: var(--offset-top);
+        height: calc(100% - var(--offset-top));
+        right: 0;
+        bottom: 0;
+        left: 0;
+        position: relative;
+        box-shadow: none;
+        z-index: 0;
+    }
+
+    .menu {
+        z-index: var(--menu-z);
+        display: var(--menu-display);
+        flex-shrink: 0;
+        order: -1;
+        width: 100%;
+        min-width: var(--menu-min-width);
+        max-width: var(--menu-max-width);
+
+        &::part(scroll) {
+            box-shadow: var(--menu-box-shadow);
+        }
+    }
+
+    .content-outlet {
+        display: var(--content-outlet-display);
+        flex: 1;
+
+        ::ng-deep ion-header {
+            display: none;
+        }
+
+    }
+
+    .content-placeholder {
+        display: var(--content-placeholder-display);
+        flex: 1;
+        position: relative;
+        background-color: var(--ion-background);
+    }
+
+}
+
+:host(.menu-only) {
+    --menu-min-width: 0px;
+    --menu-max-width: 100%;
+    --content-display: none;
+    --content-placeholder-display: none;
+    --menu-box-shadow: none;
+    --menu-z: 0px;
+    --selected-item-border-width: 0px;
+    --selected-item-color: transparent;
+}
+
+:host(.content-only) {
+    --menu-display: none;
+}
+
+:host(.outlet-activated) {
+    --content-placeholder-display: none;
+    --content-outlet-display: var(--content-display);
+}

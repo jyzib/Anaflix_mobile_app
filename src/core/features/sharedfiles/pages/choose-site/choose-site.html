@@ -1,0 +1,23 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+        <ion-title>
+            <h1>{{ 'core.sharedfiles.sharedfiles' | translate }}</h1>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <core-loading [hideUntil]="loaded">
+        <ion-list>
+            <ion-item class="ion-text-wrap">
+                <ion-label>
+                    <h2>{{ 'core.sharedfiles.chooseaccountstorefile' | translate }}</h2>
+                    <p>{{fileName}}</p>
+                </ion-label>
+            </ion-item>
+            <core-sites-list [accountsList]="accountsList" [sitesClickable]="true" (onSiteClicked)="storeInSite($event)" />
+        </ion-list>
+    </core-loading>
+</ion-content>

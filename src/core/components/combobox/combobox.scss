@@ -1,0 +1,135 @@
+@use "theme/globals" as *;
+
+:host {
+    max-width: 100%;
+    display: block;
+    @include margin-horizontal(var(--ion-safe-area-left), var(--ion-safe-area-right));
+
+    ion-select,
+    ion-button {
+        --icon-margin: 0 4px;
+        --background: var(--core-combobox-background);
+        --background-hover: black;
+        --background-activated: black;
+        --background-focused: black;
+        --background-hover-opacity: .04;
+
+        --color: var(--core-combobox-color);
+        --color-activated: var(--core-combobox-color);
+        --color-focused: currentcolor;
+        --color-hover: currentcolor;
+
+        --border-color: var(--core-combobox-border-color);
+        --border-style: solid;
+        --border-width: var(--core-combobox-border-width);
+        --border-radius: var(--radius-xs);
+
+        --box-shadow: var(--core-combobox-box-shadow);
+
+        --padding-top: 8px;
+        --padding-end: 8px;
+        --padding-bottom: 8px;
+
+        &.md {
+            --background-activated-opacity: 0;
+            --background-focused-opacity: .12;
+        }
+
+        &.ios {
+            --background-activated-opacity: .12;
+            --background-focused-opacity: .15;
+        }
+    }
+
+    ion-button {
+        --padding-start: 8px;
+    }
+
+    ion-select {
+        --padding-start: 16px;
+    }
+}
+
+ion-select,
+ion-button {
+    background: var(--background);
+    color: var(--color);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-height: var(--a11y-min-target-size);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+
+    &:focus,
+    &:focus-within {
+        @include core-focus-style();
+    }
+}
+
+ion-select {
+    border-color: var(--border-color);
+    border-style: var(--border-style);
+    border-width: var(--border-width);
+    border-radius: var(--core-combobox-radius);
+    margin: 8px;
+
+    &::part(icon) {
+        margin: var(--icon-margin);
+        opacity: 1;
+    }
+
+    &::after {
+        @include button-state();
+        transition: var(--transition);
+        z-index: -1;
+    }
+
+    &:hover::after {
+        color: var(--color-hover);
+        background: var(--background-hover);
+        opacity: var(--background-hover-opacity);
+    }
+
+    &:focus::after,
+    &:focus-within::after {
+        color: var(--color-focused);
+        background: var(--background-focused);
+        opacity: var(--background-focused-opacity);
+    }
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+ion-button {
+    border-radius: var(--core-combobox-radius);
+    margin: 4px 8px;
+
+    flex: 1;
+
+    &::part(native) {
+        text-transform: none;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 20px;
+        border-radius: var(--core-combobox-radius);
+    }
+
+    .select-text {
+        @include margin-horizontal(null, auto);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .sr-only {
+        @include sr-only();
+    }
+
+    &.ion-activated {
+        --color: var(--color-activated);
+    }
+
+    ion-icon {
+        margin: var(--icon-margin);
+    }
+}

@@ -1,0 +1,53 @@
+<ion-content>
+    <core-split-view>
+        <ion-refresher slot="fixed" [disabled]="!participants.loaded || searchInProgress" (ionRefresh)="refreshParticipants($event.target)">
+            <ion-refresher-content pullingText="{{ 'core.pulltorefresh' | translate }}" />
+        </ion-refresher>
+
+        <core-search-box [disabled]="searchInProgress" [spellcheck]="false" [lengthCheck]="1" autocorrect="off"
+            searchArea="CoreUserParticipants" (onSubmit)="search($event)" (onClear)="clearSearch()" />
+
+        <core-loading [hideUntil]="participants.loaded">
+            <core-empty-box *ngIf="participants.empty && !searchInProgress && !searchQuery" icon="far-user"
+                [message]="'core.user.noparticipants' | translate" />
+
+            <core-empty-box *ngIf="participants.empty && !searchInProgress && searchQuery" icon="fas-magnifying-glass"
+                [message]="'core.noresults' | translate" />
+
+            <ion-list *ngIf="!participants.empty">
+                <ion-item *ngFor="let participant of participants.items" class="ion-text-wrap"
+                    [attr.aria-current]="participants.getItemAriaCurrent(participant)" [attr.aria-label]="participant.fullname"
+                    (click)="participants.select(participant)" button [detail]="true">
+
+                    <core-user-avatar [user]="participant" [linkProfile]="false" [checkOnline]="true" slot="start" />
+
+                    <ion-label>
+                        <ng-container *ngIf="!searchQuery">
+                            <p class="item-heading">{{ participant.fullname }}</p>
+                            <p *ngIf="participant.lastcourseaccess !== undefined">
+                                <strong>{{ 'core.user.lastcourseaccess' | translate }}: </strong>
+                                <ng-container *ngIf="participant.lastcourseaccess">{{ participant.lastcourseaccess | coreTimeAgo }}
+                                </ng-container>
+                                <ng-container *ngIf="!participant.lastcourseaccess">{{ 'core.never' | translate }}</ng-container>
+                            </p>
+                            <p *ngIf="participant.lastcourseaccess === undefined && participant.lastaccess !== undefined">
+                                <strong>{{ 'core.lastaccess' | translate }}: </strong>
+                                <ng-container *ngIf="participant.lastaccess">{{ participant.lastaccess | coreTimeAgo }}</ng-container>
+                                <ng-container *ngIf="!participant.lastaccess">{{ 'core.never' | translate }}</ng-container>
+                            </p>
+                        </ng-container>
+
+                        <ng-container *ngIf="searchQuery">
+                            <p class="item-heading">
+                                <core-format-text [text]="participant.fullname" [highlight]="searchQuery" [filter]="false" />
+                            </p>
+                        </ng-container>
+                    </ion-label>
+
+                </ion-item>
+            </ion-list>
+            <core-infinite-loading [enabled]="participants.loaded && !participants.completed" (action)="fetchMoreParticipants($event)"
+                [error]="fetchMoreParticipantsFailed" />
+        </core-loading>
+    </core-split-view>
+</ion-content>

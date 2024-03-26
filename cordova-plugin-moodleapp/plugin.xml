@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-moodleapp" version="0.0.0">
+    <name>MoodleApp</name>
+    <description>Plugin with custom functionality for the Moodle App</description>
+    <js-module src="www/index.js" name="moodleapp">
+        <clobbers target="cordova.MoodleApp" />
+    </js-module>
+    <platform name="android">
+        <framework src="com.android.installreferrer:installreferrer:2.2" />
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="SecureStorage">
+                <param name="android-package" value="com.moodle.moodlemobile.SecureStorage"/>
+            </feature>
+            <feature name="InstallReferrer">
+                <param name="android-package" value="com.moodle.moodlemobile.InstallReferrer"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/SecureStorage.java" target-dir="src/com/moodle/moodlemobile" />
+        <source-file src="src/android/InstallReferrer.java" target-dir="src/com/moodle/moodlemobile" />
+    </platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="SecureStorage">
+                <param name="ios-package" value="SecureStorage" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/SecureStorage.h" />
+        <source-file src="src/ios/SecureStorage.m" />
+    </platform>
+</plugin>

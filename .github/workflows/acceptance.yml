@@ -1,0 +1,89 @@
+name: Acceptance tests (Behat)
+
+on:
+  workflow_dispatch:
+    inputs:
+      behat_tags:
+        description: 'Behat tags to execute'
+        required: true
+        default: '~@performance&&~@ionic7_failure'
+      moodle_branch:
+        description: 'Moodle branch'
+        required: true
+        default: 'master'
+      moodle_repository:
+        description: 'Moodle repository'
+        required: true
+        default: 'https://github.com/moodle/moodle'
+  pull_request:
+    branches: [ main, ionic7, v*.x ]
+
+jobs:
+  behat:
+    runs-on: ubuntu-latest
+    env:
+      MOODLE_DOCKER_DB: pgsql
+      MOODLE_DOCKER_BROWSER: chrome
+      MOODLE_DOCKER_PHP_VERSION: '8.1'
+      MOODLE_BRANCH: ${{ github.event.inputs.moodle_branch || 'master' }}
+      MOODLE_REPOSITORY: ${{ github.event.inputs.moodle_repository || 'https://github.com/moodle/moodle' }}
+      BEHAT_TAGS: ${{ github.event.inputs.behat_tags || '~@performance&&~@ionic7_failure' }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+    - name: Additional checkouts
+      run: |
+        git clone --branch $MOODLE_BRANCH --depth 1 $MOODLE_REPOSITORY $GITHUB_WORKSPACE/moodle
+        git clone --branch master --depth 1 https://github.com/moodlehq/moodle-docker $GITHUB_WORKSPACE/moodle-docker
+    - name: Install npm packages
+      run: npm ci --no-audit
+    - name: Create Behat faildumps folder
+      run: |
+        mkdir moodle/behatfaildumps
+        chmod 777 moodle/behatfaildumps
+    - name: Install Behat Snapshots plugin
+      run: git clone --branch main --depth 1 https://github.com/NoelDeMartin/moodle-local_behatsnapshots $GITHUB_WORKSPACE/moodle/local/behatsnapshots
+    - name: Generate Behat tests plugin
+      run: |
+        export MOODLE_DOCKER_WWWROOT=$GITHUB_WORKSPACE/moodle
+        npx gulp behat
+    - name: Configure & launch Moodle with Docker
+      run: |
+        export MOODLE_DOCKER_WWWROOT=$GITHUB_WORKSPACE/moodle
+        cp $GITHUB_WORKSPACE/moodle-docker/config.docker-template.php $GITHUB_WORKSPACE/moodle/config.php
+        sed -i "69c\$CFG->behat_faildump_path = '/var/www/html/behatfaildumps';" $GITHUB_WORKSPACE/moodle/config.php
+        sed -i "69i\$CFG->behat_increasetimeout = 2;" $GITHUB_WORKSPACE/moodle/config.php
+        sed -i "69i\$CFG->behat_ionic_wwwroot = 'http://moodleapp';" $GITHUB_WORKSPACE/moodle/config.php
+        echo "define('TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER', 'http://bbbmockserver/hash' . sha1(\$CFG->behat_wwwroot));" >> $GITHUB_WORKSPACE/moodle/config.php
+        $GITHUB_WORKSPACE/moodle-docker/bin/moodle-docker-compose pull
+        $GITHUB_WORKSPACE/moodle-docker/bin/moodle-docker-compose up -d
+        $GITHUB_WORKSPACE/moodle-docker/bin/moodle-docker-wait-for-db
+    - name: Compile & launch app with Docker
+      run: |
+        docker build --build-arg build_command="npm run build:test" -t moodlehq/moodleapp:behat .
+        docker run -d --rm --name moodleapp moodlehq/moodleapp:behat
+        docker network connect moodle-docker_default moodleapp --alias moodleapp
+        docker run --detach --name bbbmockserver --network moodle-docker_default moodlehq/bigbluebutton_mock:latest
+    - name: Init Behat
+      run: |
+        export MOODLE_DOCKER_WWWROOT=$GITHUB_WORKSPACE/moodle
+         $GITHUB_WORKSPACE/moodle-docker/bin/moodle-docker-compose exec -T webserver sh -c "php admin/tool/behat/cli/init.php --parallel=8 --optimize-runs='@app&&~@local&&$BEHAT_TAGS'"
+    - name: Run Behat tests
+      run: |
+        export MOODLE_DOCKER_WWWROOT=$GITHUB_WORKSPACE/moodle
+        $GITHUB_WORKSPACE/moodle-docker/bin/moodle-docker-compose exec -T webserver sh -c "php admin/tool/behat/cli/run.php --verbose --tags='@app&&~@local&&$BEHAT_TAGS' --auto-rerun=3"
+    - name: Upload Snapshot failures
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() }}
+      with:
+        name: snapshot_failures
+        path: moodle/local/moodleappbehat/tests/behat/snapshots/failures/*
+    - name: Upload Behat failures
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() }}
+      with:
+        name: behat_failures
+        path: moodle/behatfaildumps

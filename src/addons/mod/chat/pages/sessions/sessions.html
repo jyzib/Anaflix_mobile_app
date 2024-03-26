@@ -1,0 +1,51 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+        <ion-title>
+            <h1>{{ 'addon.mod_chat.chatreport' | translate }}</h1>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <core-split-view>
+        <ion-refresher slot="fixed" [disabled]="!sessions.loaded" (ionRefresh)="refreshSessions($event.target)">
+            <ion-refresher-content pullingText="{{ 'core.pulltorefresh' | translate }}" />
+        </ion-refresher>
+        <core-loading [hideUntil]="sessions.loaded">
+            <core-group-selector [groupInfo]="groupInfo" [(selected)]="groupId" (selectedChange)="reloadSessions()" [courseId]="courseId" />
+
+            <ion-item>
+                <ion-toggle [(ngModel)]="showAll" (ionChange)="reloadSessions()">
+                    {{ 'addon.mod_chat.showincompletesessions' | translate }}
+                </ion-toggle>
+            </ion-item>
+
+            <ion-card *ngFor="let session of sessions.items" (click)="sessions.select(session)" button
+                [attr.aria-current]="sessions.getItemAriaCurrent(session)"
+                [class.addon-mod-chat-session-show-more]="session.sessionusers.length < session.allsessionusers.length">
+
+                <ion-item class="ion-text-wrap">
+                    <ion-label>
+                        <p class="item-heading">{{ session.sessionstart * 1000 | coreFormatDate }}</p>
+                        <p *ngIf="session.duration">{{ session.duration | coreDuration }}</p>
+                    </ion-label>
+                </ion-item>
+                <ion-card-content>
+                    <ion-item *ngFor="let user of session.sessionusers">
+                        <ion-label>
+                            {{ user.userfullname }} <span *ngIf="user.messagecount">({{ user.messagecount }})</span>
+                        </ion-label>
+                    </ion-item>
+                </ion-card-content>
+                <ion-button *ngIf="session.sessionusers.length < session.allsessionusers.length" fill="clear" expand="block"
+                    (click)="showMoreUsers(session, $event)">
+                    {{ 'core.showmore' | translate }}
+                </ion-button>
+            </ion-card>
+
+            <core-empty-box *ngIf="sessions.empty" icon="far-comments" [message]="'addon.mod_chat.nosessionsfound' | translate" />
+        </core-loading>
+    </core-split-view>
+</ion-content>

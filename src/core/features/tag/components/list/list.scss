@@ -1,0 +1,11 @@
+@use "theme/globals" as *;
+
+:host {
+    line-height: 1.6;
+
+    ion-badge {
+        cursor: pointer;
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+}

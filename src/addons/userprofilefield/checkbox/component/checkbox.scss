@@ -1,0 +1,19 @@
+@use "theme/globals" as *;
+
+:host {
+    --text-overflow: initial;
+    --white-space: normal;
+
+    .item-heading {
+        white-space: normal;
+    }
+
+    ion-label {
+        @include padding-horizontal(null, .5rem);
+
+        .label-text {
+            text-overflow: var(--text-overflow);
+            white-space: var(--white-space);
+        }
+    }
+}

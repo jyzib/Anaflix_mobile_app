@@ -1,0 +1,62 @@
+@use "theme/globals" as *;
+
+$addon-mod-wiki-toc-level-padding:    12px !default;
+
+:host {
+    --addon-mod-wiki-newentry-link-color: var(--danger);
+    --addon-mod-wiki-toc-border-color: var(--gray-500);
+    --addon-mod-wiki-toc-background-color: var(--gray-200);
+
+    background-color: var(--ion-item-background);
+
+    .addon-mod_wiki-page-content {
+        background-color: var(--ion-item-background);
+        padding-bottom: 10px;
+    }
+
+    .addon-mod_wiki-page-content core-format-text ::ng-deep {
+        .wiki-toc {
+            margin: 16px;
+            padding: 8px;
+            border: 1px solid var(--addon-mod-wiki-toc-border-color);
+            background: var(--addon-mod-wiki-toc-background-color);
+            p {
+                color: var(--ion-text-color);
+            }
+        }
+
+        .wiki-toc-title {
+            font-size: 1.1em;
+            font-variant: small-caps;
+            text-align: center;
+        }
+
+        .wiki-toc-section {
+            padding: 0;
+            margin: 2px 8px;
+        }
+
+        .wiki-toc-section-2 {
+            @include padding-horizontal($addon-mod-wiki-toc-level-padding, null);
+        }
+
+        .wiki-toc-section-3 {
+            @include padding-horizontal($addon-mod-wiki-toc-level-padding * 2, null);
+        }
+
+        .wiki_newentry {
+            color: var(--addon-mod-wiki-newentry-link-color);
+            font-style: italic;
+        }
+
+        /* Hide edit section links */
+        .addon-mod_wiki-noedit a.wiki_edit_section {
+            display: none;
+        }
+    }
+}
+
+:host-context(html.dark) {
+    --addon-mod-wiki-newentry-link-color: var(--danger-tint);
+    --addon-mod-wiki-toc-background-color: var(--medium);
+}

@@ -1,0 +1,23 @@
+@use "theme/globals" as *;
+
+:host {
+    .button-disabled {
+        opacity: 0.4;
+    }
+
+    .addon-mod_lesson-highlight {
+        --background: var(--primary-tint);
+
+        ion-label, ion-label p {
+            color: var(--primary-shade);
+        }
+    }
+
+    .item-interactive-disabled ion-label {
+        opacity: 0.5;
+    }
+
+    .addon-mod_lesson-answer-stats {
+        @include margin-horizontal(null, 4px);
+    }
+}

@@ -1,0 +1,21 @@
+@use "theme/globals" as *;
+
+:host .core-block-content ::ng-deep {
+    .activitydate, .activityhead {
+        text-align: center;
+    }
+
+    .unlist {
+        list-style: none;
+        margin-left: 0;
+        margin-right: 0;
+        -webkit-padding-start: 0;
+        li {
+            margin-bottom: 1em;
+
+            .head .date {
+                @include float(end);
+            }
+        }
+    }
+}

@@ -1,0 +1,71 @@
+@use "theme/globals" as *;
+
+:host {
+    display: block;
+    margin-bottom: 8px;
+    padding-bottom: 1px; // To allow margins inside.
+    background-color: var(--contrast-background);
+
+    @include padding-horizontal(var(--ion-safe-area-left), var(--ion-safe-area-right));
+
+    core-mod-icon {
+        align-self: flex-start;
+        --padding: 4px;
+        @include margin-horizontal(null, 8px);
+    }
+
+    h1 ion-icon {
+        color: var(--medium);
+        @include margin-horizontal(8px, null);
+        font-size: 80%;
+    }
+
+    .core-module-info-box {
+        background: var(--light);
+        border-radius: var(--radius-xs);
+        margin: 8px;
+        padding: 8px;
+
+        &:empty {
+            display: none;
+        }
+
+        ::ng-deep ion-item {
+            --ion-item-background: var(--light);
+            --background: var(--light);
+        }
+
+        ::ng-deep ion-card.card-file {
+            --ion-card-horizontal-margin: 0px;
+        }
+
+        .core-module-info-box-section + .core-module-info-box-section {
+            border-top: 1px solid var(--stroke);
+            margin-top: 8px;
+            padding-top: 8px;
+        }
+
+        .core-module-availabilityinfo {
+            font-size: 90%;
+            ion-icon {
+                position: static;
+                @include margin-horizontal(null, 8px);
+            }
+
+            p,
+            ul {
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+        }
+    }
+
+    core-course-module-completion  {
+        --margin: 0px;
+    }
+}
+
+:host-context(.core-iframe-fullscreen) {
+    opacity: 0 !important;
+    height: 0 !important;
+}

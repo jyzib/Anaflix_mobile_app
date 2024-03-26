@@ -1,0 +1,121 @@
+@use "theme/globals" as *;
+
+:host {
+    --tabs-background: var(--core-tabs-background);
+    --tabs-color: var(--core-tab-color);
+    --height: var(--core-tabs-height);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    --ion-safe-area-top: 0px;
+
+    ion-tabs {
+        background: transparent;
+        position: relative;
+    }
+
+    ion-tab-bar {
+        position: relative;
+        background: var(--tabs-background);
+        @include safe-area-padding-end(null, 0px);
+        height: var(--height);
+        color: var(--tabs-color);
+        border-bottom: 1px solid var(--stroke);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-shrink: 0;
+
+        ion-spinner {
+            flex-grow: 1;
+        }
+
+        ion-button.arrow-button {
+            flex-shrink: 1;
+            margin: 0;
+            padding: 0;
+            --padding-start: 0;
+            --padding-end: 0;
+            min-width: 30px;
+            height: var(--height);
+            --border-radius: 0;
+            ion-icon {
+                font-size: 16px;
+            }
+        }
+
+        swiper-container {
+            text-align: center;
+            line-height: 1.6rem;
+            flex-grow: 1;
+
+            swiper-slide {
+                border-bottom: 2px solid transparent;
+                min-width: 100px;
+                height: var(--height);
+                cursor: pointer;
+                overflow: hidden;
+
+                ion-tab-button {
+                    max-width: 100%;
+                    ion-label {
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        word-wrap: break-word;
+                        max-width: 100%;
+                        line-height: 1.2em;
+                        h2 {
+                            font-size: 14px;
+                            font-weight: 400;
+                        }
+                    }
+                }
+
+                &[aria-selected=true],
+                &.selected {
+                    color: var(--color-active);
+                    border-bottom-color: var(--border-color-active);
+                    ion-tab-button {
+                        color: var(--color-active);
+                        ion-label {
+                            font-weight: var(--font-weight-active);
+                        }
+                    }
+                }
+            }
+        }
+
+        &.tabs-hidden {
+            display: none !important;
+            transform: translateY(0) !important;
+        }
+    }
+
+    ::ng-deep {
+        core-tab, .core-tab {
+            display: none;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+
+            &.selected {
+                display: contents;
+            }
+
+            ion-header {
+                display: none;
+            }
+
+            .fixed-content, .scroll-content {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+        }
+    }
+
+    div.core-tabs-content-container {
+        flex-grow: 1;
+        position: relative;
+    }
+}

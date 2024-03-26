@@ -1,0 +1,29 @@
+@use "theme/globals" as *;
+
+:host-context(.ios) {
+    ion-footer .toolbar:last-child {
+        padding-bottom: 4px;
+        min-height: 0;
+    }
+}
+
+ion-content {
+    --content-background: var(--background-alternative);
+    --background: var(--content-background);
+
+    &::part(scroll) {
+        padding-bottom: 0 !important;
+    }
+}
+
+.addon-messages-discussion-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 16px !important;
+    background: var(--content-background);
+}
+
+.addon-messages-date {
+    font-weight: normal;
+    font-size: 0.9rem;
+}

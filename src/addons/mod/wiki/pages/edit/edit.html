@@ -1,0 +1,41 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+        <ion-title>
+            <h1>
+                <core-format-text [text]="title" contextLevel="module" [contextInstanceId]="cmId" [courseId]="courseId" />
+            </h1>
+        </ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="save()">
+                {{ 'core.save' | translate }}
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <core-loading [hideUntil]="loaded">
+        <form [formGroup]="pageForm" #editPageForm *ngIf="loaded">
+            <ion-item class="ion-text-wrap" *ngIf="canEditTitle">
+                <ion-input [attr.aria-label]="'addon.mod_wiki.newpagetitle' | translate" name="title" type="text"
+                    [placeholder]="'addon.mod_wiki.newpagetitle' | translate" formControlName="title" />
+            </ion-item>
+
+            <ion-item>
+                <ion-label class="sr-only">{{ 'core.content' | translate }}</ion-label>
+                <core-rich-text-editor [control]="contentControl" [placeholder]="'core.content' | translate" name="wiki_page_content"
+                    [component]="component" [componentId]="cmId" [autoSave]="true" contextLevel="module" [contextInstanceId]="cmId"
+                    elementId="newcontent_editor" [draftExtraParams]="editorExtraParams" />
+            </ion-item>
+
+            <ion-item *ngIf="wrongVersionLock" class="ion-text-center addon-mod_wiki-wrongversionlock">
+                <ion-label>
+                    <ion-badge color="danger" class="ion-padding">{{ 'addon.mod_wiki.wrongversionlock' | translate }}</ion-badge>
+                </ion-label>
+            </ion-item>
+        </form>
+    </core-loading>
+</ion-content>

@@ -1,0 +1,20 @@
+@use "theme/globals" as *;
+
+:host {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+    @include margin-horizontal(null, 8px);
+}
+
+div {
+    flex-grow: 1;
+    font-size: 14px;
+    margin: 0;
+    align-self: center;
+
+    ion-icon {
+        display: var(--display-icon, inline-block);
+        @include margin-horizontal(0px, 4px);
+    }
+}

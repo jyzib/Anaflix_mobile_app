@@ -1,0 +1,13 @@
+:host {
+    core-timer {
+        &.core-timer-under-300 {
+            --timer-background: var(--danger-tint);
+            --timer-text-color: var(--danger-shade);
+        }
+
+        &.core-timer-under-900 {
+            --timer-background: var(--warning-tint);
+            --timer-text-color: var(--warning-shade);
+        }
+    }
+}

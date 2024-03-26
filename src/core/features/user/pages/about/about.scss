@@ -1,0 +1,60 @@
+:host {
+    .core-user-profile-maininfo {
+        padding-top: 16px;
+        ion-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0px;
+
+            h2 {
+                margin-top: 10px;
+            }
+        }
+    }
+    core-user-avatar {
+        --core-avatar-size: var(--core-large-avatar-size);
+        --contact-status-size: 24px;
+        --margin-end-on-item: 0px;
+        --margin-vertical-on-item: 0px;
+
+        .contact-status {
+            right: calc(50% - 12px - var(--core-avatar-size) / 2) !important;
+        }
+
+        .edit-avatar {
+            position: absolute;
+            right: calc(50% - 24px - var(--core-avatar-size) / 2);
+            bottom: -12px;
+
+            :host-context([dir="rtl"]) & {
+                left: 0;
+                right: unset;
+            }
+            &::part(native) {
+                border-radius: 50%;
+                background: var(--ion-item-background);
+            }
+        }
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    .core-user-profile-interests {
+        ion-badge {
+            cursor: pointer;
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+    }
+
+}
+
+:host-context([dir="rtl"]) core-user-avatar .edit-avatar {
+    left: -24px;
+    right: unset;
+}

@@ -1,0 +1,19 @@
+@use "theme/globals" as *;
+
+:host {
+    .addon-mod_scorm-attempt-summary ion-item > p {
+        font-size: var(--text-size);
+    }
+
+    .addon-mod_scorm-toc {
+        // Hide all non sco icons using css to maintain padding.
+        ion-icon {
+            opacity: 0;
+            @include margin(5px, 8px, null, null);
+        }
+
+        .addon-mod_scorm-type-sco ion-icon {
+            opacity: 1
+        }
+    }
+}

@@ -1,0 +1,44 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+        <ion-title>
+            <h1>{{ 'core.settings.spaceusage' | translate }}</h1>
+        </ion-title>
+        <ion-buttons slot="end">
+            <core-navbar-buttons />
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="limited-width">
+    <ion-refresher [disabled]="!loaded" (ionRefresh)="refreshData($event.target)" slot="fixed">
+        <ion-refresher-content pullingText="{{ 'core.pulltorefresh' | translate }}" />
+    </ion-refresher>
+    <core-loading [hideUntil]="loaded">
+        <ion-list class="limited-width">
+            <core-sites-list [accountsList]="accountsList">
+                <ng-template #siteLabel let-site="site">
+                    <ion-badge color="light" *ngIf="site.spaceUsage !== undefined">{{ site.spaceUsage | coreBytesToSize }}</ion-badge>
+                </ng-template>
+
+                <ng-template #siteItem let-site="site">
+                    <ion-button fill="clear" color="danger" slot="end" (click)="deleteSiteStorage(site)"
+                        [hidden]="site.spaceUsage <= 0 && !site.hasCacheEntries">
+                        <ion-icon name="fas-trash" slot="icon-only"
+                            [attr.aria-label]="'addon.storagemanager.deletedatafrom' | translate: { name: site.siteName }" />
+                    </ion-button>
+                </ng-template>
+            </core-sites-list>
+
+            <ion-item-divider>
+                <ion-label>
+                    <p class="item-heading">{{ 'core.settings.total' | translate }}</p>
+                </ion-label>
+                <p slot="end" class="ion-margin-end">
+                    {{ totalSpaceUsage | coreBytesToSize }}
+                </p>
+            </ion-item-divider>
+        </ion-list>
+    </core-loading>
+</ion-content>

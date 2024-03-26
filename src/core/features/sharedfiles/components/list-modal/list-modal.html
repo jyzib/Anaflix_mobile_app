@@ -1,0 +1,16 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title>
+            <h1>{{ title }}</h1>
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="closeModal()" [attr.aria-label]="'core.close' | translate">
+                <ion-icon name="fas-xmark" slot="icon-only" aria-hidden=true />
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <core-shared-files-list [siteId]="siteId" [mimetypes]="mimetypes" [isModal]="true" [manage]="manage" [pick]="pick" [path]="path"
+        [showSitePicker]="!hideSitePicker" (onPathChanged)="calculateTitle($event)" (onFilePicked)="filePicked($event)" />
+</ion-content>

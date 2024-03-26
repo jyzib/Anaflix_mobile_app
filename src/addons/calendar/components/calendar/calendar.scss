@@ -1,0 +1,156 @@
+@use "theme/globals" as *;
+
+:host {
+    --addon-calendar-blank-day-background-color: var(--light);
+
+    .core-swipe-slides-container ion-grid {
+        flex: none;
+        width: 100%;
+    }
+
+    .addon-calendar-navigation {
+        padding-top: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .addon-calendar-months {
+        background-color: var(--contrast-background);
+        padding: 0;
+        font-size: var(--text-size);
+    }
+
+    .addon-calendar-day {
+        border-bottom: 1px solid var(--addon-calendar-border-color);
+        @include border-end(1px, solid var(--addon-calendar-border-color));
+        overflow: hidden;
+        min-height: 60px;
+
+        &:first-child {
+            @include padding-horizontal(10px, null);
+        }
+        &:last-child {
+            @include border-end(0);
+            @include padding-horizontal(8px, null);
+        }
+
+        &.addon-calendar-event-past-day > .addon-calendar-dot-types,
+        &.addon-calendar-event-past-day > .addon-calendar-day-events {
+            opacity: 0.5;
+        }
+
+        .addon-calendar-day-number {
+            margin: 0;
+
+            span {
+                line-height: 24px;
+                font-weight: 500;
+                display: inline-block;
+                margin: 3px;
+                width: max-content;
+                width: 24px;
+                height: 24px;
+                text-align: center;
+            }
+        }
+
+        @include media-breakpoint-up(md) {
+            .addon-calendar-day-number {
+                text-align: start;
+            }
+        }
+
+        &.today .addon-calendar-day-number span {
+            border: 2px solid var(--addon-calendar-today-border-color);
+            line-height: 20px;
+            border-radius: 50%;
+        }
+        &.dayblank {
+            cursor: auto;
+            background-color: var(--addon-calendar-blank-day-background-color);
+        }
+
+        .addon-calendar-event {
+            margin-top: 0.6em;
+            margin-bottom: 0.6em;
+            overflow: hidden;
+            white-space: nowrap;
+            color: var(--text-color);
+            min-height: auto;
+
+            &.addon-calendar-event-past {
+                opacity: 0.5;
+            }
+
+            .addon-calendar-event-name {
+                font-weight: 500;
+            }
+        }
+
+        .addon-calendar-day-more {
+            @include margin(0.6em, null, 0.6em, 4px);
+        }
+
+        .addon-calendar-dot-types {
+            margin: 0;
+        }
+    }
+
+    .addon-calendar-period {
+        flex-grow: 3;
+        h2 {
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .addon-calendar-loading-month {
+            height: 20px;
+        }
+    }
+
+    .addon-calendar-weekday {
+        border-bottom: 1px solid var(--addon-calendar-border-color);
+        font-weight: bold;
+    }
+
+    .addon-calendar-day-events {
+        text-align: start;
+
+        ion-icon {
+            @include margin-horizontal(null, 2px);
+            font-size: 1em;
+        }
+    }
+
+    .addon-calendar-event, .addon-calendar-day-number, .addon-calendar-day-more {
+        cursor: pointer;
+    }
+
+    .calendar_event_type {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: 1px solid white;
+        margin-right: 1px;
+        margin-left: 1px;
+
+        @each $category, $value in $calendar-event-category-colors {
+            &.calendar_event_#{$category} {
+                background-color: $value;
+            }
+        }
+    }
+
+    swiper-slide {
+        display: block;
+        font-size: inherit;
+        justify-content: start;
+        align-items: start;
+        text-align: start;
+    }
+}
+
+:host-context(html.dark) {
+    --addon-calendar-blank-day-background-color: var(--gray-900);
+}

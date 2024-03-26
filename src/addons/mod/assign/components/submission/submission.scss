@@ -1,0 +1,47 @@
+:host ::ng-deep {
+    ion-item.latesubmission,
+    ion-item.overdue {
+        border-bottom: 3px solid var(--danger) !important;
+        ion-icon {
+            color: var(--danger);
+        }
+    }
+
+    ion-item.earlysubmission {
+        border-bottom: 3px solid var(--success) !important;
+        ion-icon {
+            color: var(--success);
+        }
+    }
+
+    ion-item.submissioneditable p {
+        color: var(--danger);
+    }
+
+    .core-grading-summary .advancedgrade {
+        display: none;
+    }
+
+    ion-badge {
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+    core-timer {
+        &.core-timer-under-300 {
+            --timer-background: var(--danger-tint);
+            --timer-text-color: var(--danger-shade);
+        }
+
+        &.core-timer-under-900 {
+            --timer-background: var(--warning-tint);
+            --timer-text-color: var(--warning-shade);
+        }
+    }
+}
+
+:host-context(html.dark) ::ng-deep {
+    ion-item.submissioneditable p {
+        color: var(--danger-tint);
+    }
+}

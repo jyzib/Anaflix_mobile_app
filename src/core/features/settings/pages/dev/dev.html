@@ -1,0 +1,116 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+
+        <ion-title>
+            <h1>{{ 'core.settings.developeroptions' | translate }}</h1>
+        </ion-title>
+
+        <ion-buttons slot="end" *ngIf="siteId">
+            <ion-button fill="clear" (click)="copyInfo()" [attr.aria-label]="'core.settings.copyinfo' | translate">
+                <ion-icon slot="icon-only" name="fas-clipboard" aria-hidden="true" />
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list class="list-item-limited-width">
+        <ion-item class="ion-text-wrap">
+            <ion-toggle [(ngModel)]="rtl" (ionChange)="RTLChanged()">
+                <p class="item-heading">Change text direction</p>
+                <p>{{ direction }}</p>
+            </ion-toggle>
+        </ion-item>
+        <ion-item class="ion-text-wrap">
+            <ion-toggle [(ngModel)]="forceSafeAreaMargins" (ionChange)="safeAreaChanged()">
+                <p class="item-heading">Force safe area margins</p>
+            </ion-toggle>
+        </ion-item>
+        <ion-item class="ion-text-wrap" *ngIf="stagingSitesCount && enableStagingSites !== undefined">
+            <ion-toggle [(ngModel)]="enableStagingSites" (ionChange)="setEnabledStagingSites($event.detail.checked)">
+                <p class="item-heading">Enable staging sites <ion-badge>{{stagingSitesCount}}</ion-badge></p>
+            </ion-toggle>
+        </ion-item>
+        <ng-container *ngIf="siteId">
+            <ion-item class="ion-text-wrap">
+                <ion-toggle [(ngModel)]="remoteStyles" (ionChange)="remoteStylesChanged()">
+                    <p class="item-heading">Enable remote styles <ion-badge>{{remoteStylesCount}}</ion-badge>
+                    </p>
+                </ion-toggle>
+            </ion-item>
+            <ion-item class="ion-text-wrap">
+                <ion-toggle [(ngModel)]="pluginStyles" (ionChange)="pluginStylesChanged()">
+                    <p class="item-heading">Enable site plugin styles <ion-badge>{{pluginStylesCount}}</ion-badge>
+                    </p>
+                </ion-toggle>
+            </ion-item>
+        </ng-container>
+
+        <ion-item class="ion-text-wrap" *ngIf="userToursEnabled">
+            <ion-label>
+                <p class="item-heading">Reset user tours</p>
+            </ion-label>
+            <ion-button (click)="resetUserTours()" aria-label="Reset user tours" fill="clear" slot="end">
+                <ion-icon slot="icon-only" aria-hidden="true" name="fas-repeat" />
+            </ion-button>
+        </ion-item>
+
+        <ion-item class="ion-text-wrap">
+            <ion-label>
+                <p class="item-heading">Invalidate caches</p>
+            </ion-label>
+            <ion-button (click)="invalidateCaches()" aria-label="Invalidate caches" fill="clear" slot="end">
+                <ion-icon slot="icon-only" aria-hidden="true" name="fas-rotate-right" />
+            </ion-button>
+        </ion-item>
+
+        <ion-item class="ion-text-wrap" (click)="openErrorLog()" [detail]="true" button>
+            <ion-label>
+                <p class="item-heading">Error log</p>
+            </ion-label>
+        </ion-item>
+
+        <ion-item class="ion-text-wrap">
+            <ion-label>
+                <p class="item-heading">Clean file storage</p>
+                <p>Clear deleted sites from file storage and temp folder</p>
+            </ion-label>
+            <ion-button (click)="clearFileStorage()" aria-label="Clear File Storage" fill="clear" slot="end">
+                <ion-icon slot="icon-only" aria-hidden="true" name="fas-broom" />
+            </ion-button>
+        </ion-item>
+
+        <ng-container *ngIf="siteId">
+            <ion-item-divider>
+                <ion-label>
+                    <h2>Disabled features</h2>
+                </ion-label>
+            </ion-item-divider>
+            <ion-item *ngIf="disabledFeatures.length === 0">
+                <ion-label>There are no features disabled</ion-label>
+            </ion-item>
+            <ion-item class="ion-text-wrap" *ngFor="let feature of disabledFeatures">
+                <ion-label>
+                    <p class="item-heading">{{ feature }}</p>
+                </ion-label>
+            </ion-item>
+
+            <ion-item-divider>
+                <ion-label>
+                    <h2>Site plugins</h2>
+                </ion-label>
+            </ion-item-divider>
+            <ion-item *ngIf="sitePlugins.length === 0">
+                <ion-label>There are no site plugins installed</ion-label>
+            </ion-item>
+            <ion-item class="ion-text-wrap" *ngFor="let plugin of sitePlugins">
+                <ion-label>
+                    <p class="item-heading">{{ plugin.addon }} ({{plugin.component}})</p>
+                    <p>{{plugin.version}}</p>
+                </ion-label>
+            </ion-item>
+        </ng-container>
+    </ion-list>
+</ion-content>

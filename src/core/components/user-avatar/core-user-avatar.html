@@ -1,0 +1,29 @@
+<ng-container *ngIf="avatarUrl">
+    <img class="userpicture" *ngIf="linkProfile" [src]="avatarUrl" [alt]="'core.pictureof' | translate:{$a: fullname}" core-external-content
+        (error)="loadImageError()" (ariaButtonClick)="gotoProfile($event)" [siteId]="siteId">
+
+    <img class="userpicture" *ngIf="!linkProfile" [src]="avatarUrl" [alt]="'core.pictureof' | translate:{$a: fullname}"
+        core-external-content (error)="loadImageError()" aria-hidden="true" [siteId]="siteId">
+</ng-container>
+<ng-container *ngIf="!avatarUrl && initials">
+    <div class="userinitials" *ngIf="linkProfile" [attr.aria-label]="'core.pictureof' | translate:{$a: fullname}"
+        (ariaButtonClick)="gotoProfile($event)">
+        {{ initials }}
+    </div>
+
+    <div class="userinitials" *ngIf="!linkProfile" [attr.aria-label]="'core.pictureof' | translate:{$a: fullname}" aria-hidden="true">
+        {{ initials }}
+    </div>
+</ng-container>
+<ng-container *ngIf="!avatarUrl && !initials">
+    <img class="userpicture" *ngIf="linkProfile" src="assets/img/user-avatar.png" [alt]="'core.pictureof' | translate:{$a: fullname}"
+        (ariaButtonClick)="gotoProfile($event)">
+
+    <img class="userpicture" *ngIf="!linkProfile" src="assets/img/user-avatar.png" [alt]="'core.pictureof' | translate:{$a: fullname}"
+        aria-hidden="true">
+</ng-container>
+
+<span *ngIf="checkOnline && isOnline()" class="contact-status online" role="status" [attr.aria-label]="'core.online' | translate">
+</span>
+
+<ng-content></ng-content>

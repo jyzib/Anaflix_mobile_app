@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [
+      "@moodlehq/cordova-plugin-file-transfer",
+      "@moodlehq/cordova-plugin-inappbrowser",
+      "@moodlehq/phonegap-plugin-push",
+      "cordova-plugin-moodleapp",
+      "cordova",
+      "dom-mediacapture-record",
+      "resize-observer-browser",
+      "webpack-env"
+    ]
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "src/**/tests/**",
+    "src/**/stories/**",
+    "src/testing/**",
+    "src/storybook/**",
+    "src/**/*.test.ts",
+    "src/**/*.stories.*"
+  ]
+}

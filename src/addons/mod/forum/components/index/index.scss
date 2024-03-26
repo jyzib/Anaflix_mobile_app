@@ -1,0 +1,77 @@
+@use "theme/globals" as *;
+
+:host {
+
+    .addon-forum-star {
+        color: var(--core-star-color);
+    }
+
+    .core-discussionusername {
+        font-size: 1.2em;
+    }
+
+    .core-groupname {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .addon-mod-forum-discussion.item {
+        ion-label {
+            margin-top: 4px;
+
+            .item-heading {
+                margin-top: 8px;
+                margin-bottom: 8px;
+                font-weight: bold;
+
+                ion-icon {
+                    @include margin(0, 6px, 0, 0);
+
+                    &.addon-mod-forum-locked-icon {
+                        @include margin-horizontal(4px, 0px);
+                        color: var(--gray-500);
+                    }
+                }
+
+            }
+
+        }
+
+        core-user-avatar {
+            --core-avatar-size: var(--addon-forum-avatar-size);
+
+            @include margin(0, 8px, 0, 0);
+        }
+
+        .addon-mod-forum-discussion-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .addon-mod-forum-discussion-info .addon-mod-forum-discussion-author {
+            flex-grow: 1;
+        }
+
+        .addon-mod-forum-discussion-title {
+            @include margin-horizontal(null, 8px);
+            line-height: 18px;
+        }
+
+
+        .addon-mod-forum-discussion-more-info.ios {
+            font-size: 0.9rem;
+        }
+
+        ion-button {
+            position: absolute;
+            @include position (4px, 8px, null, null);
+        }
+
+    }
+
+    .core-group-selector {
+        border-top: 1px solid var(--spacer-color);
+    }
+
+}

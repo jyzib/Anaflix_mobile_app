@@ -1,0 +1,62 @@
+:host {
+    --height: var(--a11y-min-target-size);
+    --search-height: calc(var(--height) - 2px);
+    min-height: var(--height);
+    display: block;
+    position: relative;
+    margin: 8px;
+
+    form {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 4;
+        margin: 0;
+        border: 1px solid var(--core-search-box-border-color);
+        border-radius: var(--core-search-box-border-radius);
+        background: var(--core-search-box-background);
+        color: var(--core-search-box-border-color);
+
+        --min-height: var(--search-height);
+
+        ion-input {
+            --padding-start: 16px;
+            --padding-end: 16px;
+            --border-radius: var(--core-search-box-border-radius);
+            min-height: var(--search-height);
+        }
+
+        ion-button.button {
+            margin: 0;
+            --a11y-min-target-size: var(--search-height);
+            --padding-start: 0px;
+            --padding-end: 0px;
+            font-size: 12px;
+        }
+    }
+
+
+
+    .core-search-history {
+        max-height: calc(-120px + 80vh);
+        overflow-y: auto;
+        background: var(--core-search-box-background);
+        border-radius: 0 0 var(--core-search-box-border-radius) var(--core-search-box-border-radius);
+        --ion-item-background: var(--core-search-box-background);
+
+        .item:hover {
+            --background: var(--light);
+            cursor: pointer;
+        }
+
+        ion-item {
+            --min-height: var(--a11y-min-target-size);
+            --border-width: 0px;
+            --background: var(--core-search-box-background);
+
+            ion-label {
+                margin: 0;
+            }
+        }
+    }
+}

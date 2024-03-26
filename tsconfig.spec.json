@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/tests",
+    "target": "es2016",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "types": [
+      "@moodlehq/cordova-plugin-file-transfer",
+      "@moodlehq/cordova-plugin-inappbrowser",
+      "@moodlehq/phonegap-plugin-push",
+      "cordova-plugin-moodleapp",
+      "cordova",
+      "dom-mediacapture-record",
+      "faker",
+      "jest",
+      "node",
+      "resize-observer-browser"
+    ]
+  },
+  "files": [
+    "src/testing/setup.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ]
+}

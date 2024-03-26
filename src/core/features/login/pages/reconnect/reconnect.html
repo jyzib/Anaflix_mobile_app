@@ -1,0 +1,95 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button fill="clear" (click)="cancel($event)" [attr.aria-label]="'core.back' | translate" class="ion-back-button">
+                <ion-icon ios="chevron-back" md="arrow-back-sharp" slot="icon-only" aria-hidden="true" />
+            </ion-button>
+        </ion-buttons>
+
+        <ion-title>
+            <h1>{{ 'core.login.reconnect' | translate }}</h1>
+        </ion-title>
+
+        <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="showHelp()" [attr.aria-label]="'core.help' | translate">
+                <ion-icon slot="icon-only" name="far-circle-question" aria-hidden="true" />
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding" (keydown)="keyDown($event)" (keyup)="keyUp($event)">
+    <core-loading [hideUntil]="!showLoading">
+        <div class="list-item-limited-width" *ngIf="site">
+            <ion-card *ngIf="!isLoggedOut" class="core-warning-card core-login-reconnect-warning">
+                <ion-item>
+                    <ion-icon name="fas-triangle-exclamation" slot="start" aria-hidden="true" />
+                    <ion-label>
+                        <p>{{ 'core.lostconnection' | translate }}</p>
+                    </ion-label>
+                </ion-item>
+            </ion-card>
+
+            <div class="ion-text-wrap ion-text-center core-login-info-box">
+                <div class="core-login-site">
+                    <div class="core-login-site-logo" *ngIf="!showUserAvatar && logoUrl">
+                        <img [src]="logoUrl" role="presentation" onError="this.src='assets/img/login_logo.png'" alt="">
+                    </div>
+
+                    <p *ngIf="siteInfo?.siteName" class="ion-no-margin ion-no-padding core-sitename">
+                        <core-format-text [text]="siteInfo?.siteName" [filter]="false" />
+                    </p>
+                    <p class="core-siteurl" *ngIf="displaySiteUrl">{{site.siteUrl}}</p>
+                </div>
+
+                <div class="core-login-user">
+                    <!-- Show user avatar. -->
+                    <core-user-avatar class="large-avatar" *ngIf="showUserAvatar" [site]="siteInfo" [linkProfile]="false"
+                        [siteId]="siteId" />
+                    <p *ngIf="siteInfo?.fullname" class="core-login-fullname">
+                        <core-format-text [text]="siteInfo?.fullname" [filter]="false" />
+                    </p>
+                </div>
+                <core-login-exceeded-attempts *ngIf="exceededAttemptsHTML && supportConfig && reconnectAttempts >= 3"
+                    [supportConfig]="supportConfig" [supportSubject]="'core.login.exceededloginattemptssupportsubject' | translate">
+                    <div [innerHTML]="exceededAttemptsHTML" (click)="exceededAttemptsClicked($event)"></div>
+                </core-login-exceeded-attempts>
+            </div>
+
+            <div class="core-login-methods">
+                <form *ngIf="!isBrowserSSO" [formGroup]="credForm" (ngSubmit)="login($event)" class="core-login-form" #reconnectForm>
+                    <ion-item class="ion-margin-bottom" lines="inset">
+                        <ion-input class="core-ioninput-password" name="password" type="password"
+                            placeholder="{{ 'core.login.password' | translate }}" formControlName="password" [clearOnEdit]="false"
+                            autocomplete="current-password" enterkeyhint="go" required="true"
+                            [attr.aria-label]="'core.login.password' | translate">
+                            <core-show-password slot="end" />
+                        </ion-input>
+                    </ion-item>
+                    <ion-button type="submit" expand="block" [disabled]="!credForm.valid"
+                        class="ion-margin core-login-login-button ion-text-wrap">
+                        {{ 'core.login.loginbutton' | translate }}
+                    </ion-button>
+
+                    <!-- Forgotten password option. -->
+                    <ion-button *ngIf="showForgottenPassword" expand="block" fill="clear"
+                        class="core-login-forgotten-password core-button-as-link ion-text-wrap" (click)="forgottenPassword()">
+                        {{ 'core.login.forgotaccount' | translate }}
+                    </ion-button>
+                </form>
+
+                <ng-container *ngIf="isBrowserSSO">
+                    <ion-button expand="block" (click)="openBrowserSSO()"
+                        class="ion-margin core-login-login-inbrowser-button ion-text-wrap">
+                        {{ 'core.login.loginbutton' | translate }}
+                        <ion-icon name="fas-up-right-from-square" slot="end" aria-hidden="true" />
+                    </ion-button>
+                    <p class="text-center core-login-inbrowser">{{ 'core.openinbrowserdescription' | translate }}</p>
+                </ng-container>
+
+                <!-- Additional Login methods -->
+                <core-login-methods *ngIf="siteConfig" [siteConfig]="siteConfig" [reconnect]="true" [siteUrl]="site.siteUrl"
+                    [redirectData]="redirectData" />
+            </div>
+        </div>
+    </core-loading>
+</ion-content>

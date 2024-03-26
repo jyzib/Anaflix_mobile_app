@@ -1,0 +1,15 @@
+// Text for accessibility, hidden from the view.
+.sr-only, .accesshide {
+    @include sr-only();
+
+    display: block !important;
+}
+
+.sr-only-focusable:active, .sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}

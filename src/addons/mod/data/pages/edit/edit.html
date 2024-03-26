@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button [text]="'core.back' | translate" />
+        </ion-buttons>
+        <ion-title>
+            <h1>
+                <core-format-text [text]="title" contextLevel="module" [contextInstanceId]="moduleId" [courseId]="courseId" />
+            </h1>
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button *ngIf="entry" fill="clear" (click)="save($event)">
+                {{ 'core.save' | translate }}
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <core-loading [hideUntil]="loaded">
+        <core-group-selector [groupInfo]="groupInfo" [(selected)]="selectedGroup" (selectedChange)="setGroup(selectedGroup)"
+            [courseId]="database?.course" />
+
+        <div class="addon-data-contents {{cssClass}}" *ngIf="database">
+            <core-style [css]="database.csstemplate" prefix=".{{cssClass}}" />
+
+            <form (ngSubmit)="save($event)" [formGroup]="editForm" #editFormEl>
+                <core-compile-html [text]="editFormRender" [jsData]="jsData" [extraImports]="extraImports" />
+            </form>
+        </div>
+    </core-loading>
+</ion-content>
